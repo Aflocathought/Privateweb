@@ -18,7 +18,7 @@ import {
 } from "@ant-design/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import MyCalendar from "../Calendar/Calendar";
+import MyCalendar from "../Calendar/MyCalendar";
 import type { ColorPickerProps } from "antd";
 import { Icon } from "./Components/Icon";
 import { CombinedInput } from "./Components/CombinedInput";
