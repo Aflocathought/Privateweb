@@ -43,9 +43,9 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Install dependencies
-        run: pnpm install # 或 pnpm install / yarn install / bun install
+        run: pnpm install 
       - name: Build
-        run: pnpm dev
+        run: pnpm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
