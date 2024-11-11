@@ -3,7 +3,7 @@ import "./App.css";
 import Calendar from "react-calendar";
 
 // @ts-ignore
-import { Todo } from "./TodoUpdate";
+import { Todo } from "../Todo/TodoUpdate";
 
 export const MyCalendar = () => {
   const [date, setDate] = useState(new Date());

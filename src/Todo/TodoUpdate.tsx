@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
-import { find, IDropdownOption } from "@fluentui/react";
+import "./Todo.css";
+import "../index.css";
+import { IDropdownOption } from "@fluentui/react";
 import debounce from "lodash.debounce";
 import { Option, Textarea, Divider } from "@fluentui/react-components";
 import { Select, ColorPicker, theme, Button, Checkbox } from "antd";
@@ -18,8 +19,13 @@ import {
 } from "@ant-design/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, fas } from "@fortawesome/free-solid-svg-icons";
-import MyCalendar from "./Calendar";
+import MyCalendar from "../Calendar/Calendar";
 import type { ColorPickerProps } from "antd";
+import { Icon } from "./Components/Icon";
+import {
+  calculateBackgroundColor2,
+  calculateBackgroundColor,
+} from "./TodoFunction";
 
 type Presets = Required<ColorPickerProps>["presets"][number];
 
@@ -32,6 +38,32 @@ import {
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
 
+interface SubTasks {
+  text: string;
+  completed: boolean;
+  origin: number;
+  index: number;
+  selfcollapsed: boolean;
+}
+// 定义待办事项的类型
+export interface TodoItem {
+  ID: number;
+  text: string;
+  timestamp: number;
+  describe: string;
+  color: string;
+  backgroundColor: string;
+  subtasks: SubTasks[];
+  icon: string;
+  state: number;
+  deadline: Date | number;
+  completed: boolean;
+  completedtime: number;
+  transform: string;
+  subtaskscollapsed: boolean;
+  updatetime: number;
+}
+
 declare global {
   interface Window {
     colorTodos: () => void;
@@ -39,13 +71,6 @@ declare global {
   }
 }
 
-/**
- * This function updates the backgroundColor property of each todo item in localStorage.
- * It calculates the backgroundColor based on the color property of the todo item.
- * If the todo item does not have a backgroundColor property, it adds one.
- * After updating the todo items, it saves them back to localStorage.
- * It returns a message indicating whether the update was successful or not.
- */
 window.colorTodos = function () {
   console.log(
     "此函数更新所有todos中backgroundColor的属性（如果没有）。由每个todo的color属性去计算backgroundColor。"
@@ -67,39 +92,6 @@ window.colorTodos = function () {
   }
 };
 
-function calculateBackgroundColor(color: string) {
-  let r =
-    parseInt(color.slice(1, 3), 16) + 70 > 255
-      ? 255
-      : parseInt(color.slice(1, 3), 16) + 70;
-  let g =
-    parseInt(color.slice(3, 5), 16) + 70 > 255
-      ? 255
-      : parseInt(color.slice(3, 5), 16) + 70;
-  let b =
-    parseInt(color.slice(5, 7), 16) + 70 > 255
-      ? 255
-      : parseInt(color.slice(5, 7), 16) + 70;
-  let a = 0.18;
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
-function calculateBackgroundColor2(color: string) {
-  let r =
-    parseInt(color.slice(1, 3), 16) + 35 > 255
-      ? 255
-      : parseInt(color.slice(1, 3), 16) + 35;
-  let g =
-    parseInt(color.slice(3, 5), 16) + 35 > 255
-      ? 255
-      : parseInt(color.slice(3, 5), 16) + 35;
-  let b =
-    parseInt(color.slice(5, 7), 16) + 35 > 255
-      ? 255
-      : parseInt(color.slice(5, 7), 16) + 35;
-  let a = 0.25;
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
-
 window.clearTodos = function () {
   console.log("此函数删除所有的todos。确定要吗？(y/n)");
   if (window.confirm("Are you sure you want to delete all todos?")) {
@@ -109,67 +101,8 @@ window.clearTodos = function () {
 };
 
 export const Todo = () => {
-  /**
-   * 解决鼠标碰到输入法时触发鼠标离开的问题
-   * @param e
-   * @returns
-   */
-  const handleMouseLeave = (e: { screenX: number; screenY: number }) => {
-    if (
-      (e.screenX === 0 && e.screenY === 0) ||
-      typing ||
-      isEditing ||
-      isEditingSubtask
-    ) {
-      return;
-    }
-
-    setHoverIndex(null);
-    setIsEditing(false);
-  };
-  /**
-   * 解决鼠标碰到输入法时触发鼠标离开的问题
-   * @param e
-   * @returns
-   */
-  const handleMouseLeaveinSubtask = (e: {
-    screenX: number;
-    screenY: number;
-  }) => {
-    if ((e.screenX === 0 && e.screenY === 0) || isEditingSubtask) {
-      return;
-    }
-
-    setIsEditingSubtask(false);
-  };
-  interface SubTask {
-    text: string;
-    completed: boolean;
-    origin: number;
-    index: number;
-    selfcollapsed: boolean;
-  }
-  // 定义待办事项的类型
-  interface TodoItem {
-    ID: number;
-    title: string;
-    timestamp: number;
-    describe: string;
-    color: string;
-    backgroundColor: string;
-    subtasks: SubTask[];
-    icon: string;
-    state: number;
-    deadline: Date | number;
-    completed: boolean;
-    completedtime: number;
-    transform: string;
-    subtaskscollapsed: boolean;
-    updatetime: number;
-  }
-  interface TodoManager {}
-
   // #region Variables
+  const [todos, setTodos] = useState<TodoItem[]>([]);
 
   const [input, setInput] = useState<string>("");
   const [subInput, setSubInput] = useState<string>("");
@@ -179,6 +112,7 @@ export const Todo = () => {
     null
   );
 
+  const [deletedTodos, setDeletedTodos] = useState<TodoItem[]>([]);
   const [undoStack, setUndoStack] = useState([]);
 
   const iconOptions: IDropdownOption[] = Object.keys(fas).map((iconName) => ({
@@ -220,234 +154,380 @@ export const Todo = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingSubtask, setIsEditingSubtask] = useState(false);
 
-  const [deletedSubtasks, setDeletedSubtask] = useState<SubTask[]>([]);
-  const [deletedTodos, setDeletedTodos] = useState<TodoItem[]>([]);
-
   iconOptions.unshift({ key: "", text: "无（请选择图标）" });
   // #endregion
-  class SubTask {
-    constructor(
-      text: string,
-      completed: boolean,
-      origin: number,
-      index: number,
-      selfcollapsed: boolean
-    ) {
-      this.text = text;
-      this.completed = completed;
-      this.origin = origin;
-      this.index = index;
-      this.selfcollapsed = selfcollapsed;
+
+  // 在组件加载时从 localStorage 中读取待办事项列表
+  useEffect(() => {
+    const storedTodos = localStorage.getItem("todos");
+    if (storedTodos) {
+      setTodos(JSON.parse(storedTodos));
     }
+  }, []);
 
-    public completeSubtask = () => {
-      this.completed = !this.completed;
-    };
+  /**
+   * （输入时）更改待办事项的颜色
+   * @param index
+   * @param color
+   */
+  const changeColor = (index: number, color: any) => {
+    todos[index].color = color.toHexString();
+    todos[index].backgroundColor = calculateBackgroundColor(
+      color.toHexString()
+    );
+    todoRefreshTime(index);
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
 
-    public subtaskChange = (text: string) => {
-      this.text = text;
-    };
-  }
+  /**
+   * （输入时）更改待办事项的图标
+   * @param index
+   * @param iconName
+   */
 
-  class TodoItem {
-    constructor(
-      ID: number,
-      title: string,
-      describe: string,
-      color: string,
-      backgroundColor: string,
-      subtasks: SubTask[],
-      icon: string,
-      state: number,
-      deadline: Date | number,
-      completed: boolean,
-      completedtime: number,
-      transform: string,
-      subtaskscollapsed: boolean,
-      updatetime: number
-    ) {
-      this.ID = ID;
-      this.title = title;
-      this.timestamp = timestamp;
-      this.describe = describe;
-      this.color = color;
-      this.backgroundColor = backgroundColor;
-      this.subtasks = subtasks;
-      this.icon = icon;
-      this.state = state;
-      this.deadline = deadline;
-      this.completed = completed;
-      this.completedtime = completedtime;
-      this.transform = transform;
-      this.subtaskscollapsed = subtaskscollapsed;
-      this.updatetime = updatetime;
-    }
-    public changeColor = (color: string) => {
-      this.color = color;
-      this.backgroundColor = calculateBackgroundColor(color);
-    };
-    public changeIcon = (icon: string) => {
-      this.icon = icon;
-    };
-    public changeTitle = (title: string) => {
-      this.title = title;
-    };
-    public completeTodo = () => {
-      this.completed = !this.completed;
-      if (this.completed) {
-        this.completedtime = Date.now();
-      } else {
-        this.completedtime = 0;
+  const changeIconFix = (ID: number, iconName: string) => {
+    for (let i = 0; i < todos.length; i++) {
+      if (todos[i].ID === ID) {
+        todos[i].icon = iconName;
+        todoRefreshTime(i);
+        localStorage.setItem("todos", JSON.stringify(todos));
       }
-    };
-    public changeDDL = (date: Date) => {
-      this.deadline = date;
-    };
+    }
+  };
 
-    public addSubtask = (text: string) => {
+  /**
+   * 更改待办事项的标题
+   * @param e
+   * @param index
+   */
+  const titleChange = (e: { target: { value: string } }, index: number) => {
+    const newTodos = [...todos];
+    newTodos[index].text = e.target.value;
+    setTodos(newTodos);
+    todoRefreshTime(index);
+    localStorage.setItem("todos", JSON.stringify(newTodos));
+  };
+
+  /**
+   * 更改子任务的标题
+   * @param e
+   * @param index
+   * @param subindex
+   */
+  const subtaskChange = (
+    e: { target: { value: string } },
+    index: number,
+    subindex: number
+  ) => {
+    const newTodos = [...todos];
+    newTodos[index].subtasks[subindex].text = e.target.value;
+    setTodos(newTodos);
+    todoRefreshTime(index);
+    localStorage.setItem("todos", JSON.stringify(newTodos));
+  };
+
+  /**
+   * 解决鼠标碰到输入法时触发鼠标离开的问题
+   * @param e
+   * @returns
+   */
+  const handleMouseLeave = (e: { screenX: number; screenY: number }) => {
+    if (
+      (e.screenX === 0 && e.screenY === 0) ||
+      typing ||
+      isEditing ||
+      isEditingSubtask
+    ) {
+      return;
+    }
+
+    setHoverIndex(null);
+    setIsEditing(false);
+  };
+
+  /**
+   * 解决鼠标碰到输入法时触发鼠标离开的问题
+   * @param e
+   * @returns
+   */
+  const handleMouseLeaveinSubtask = (e: {
+    screenX: number;
+    screenY: number;
+  }) => {
+    if ((e.screenX === 0 && e.screenY === 0) || isEditingSubtask) {
+      return;
+    }
+
+    setIsEditingSubtask(false);
+  };
+
+  /**
+   * 添加新的待办事项
+   * @param e
+   */
+  const addTodo = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input) {
       const now = Date.now();
-      const newSubtask = new SubTask(text, false, this.ID, now, false);
-      this.subtasks.push(newSubtask);
-    };
-
-    public findSubtaskIndex = (index: number) => {
-      return this.subtasks.findIndex((subtask) => subtask.index === index);
-    };
-
-    public delSubtask = (ID: number) => {
-      const index = this.findSubtaskIndex(ID);
-      if (index !== -1) {
-        deletedSubtasks.push(this.subtasks[index]);
-        this.subtasks.splice(ID, 1);
-      }
-    };
-
-    public collapseSubtask = () => {
-      this.subtaskscollapsed = !this.subtaskscollapsed;
-    };
-  }
-
-  class TodoManager {
-    public todos: TodoItem[] = [];
-
-    constructor() {
-      this.loadTodos();
-    }
-
-    public loadTodos = () => {
-      const storedTodos = localStorage.getItem("todos");
-      if (storedTodos) {
-        this.todos = JSON.parse(storedTodos);
-      }
-    };
-
-    public sortTodo = () => {
-      this.todos.sort((a, b) =>
+      const newTodo: TodoItem = {
+        ID: now,
+        text: input,
+        timestamp: now,
+        describe: "",
+        color: colorInput, // 使用用户输入的颜色
+        backgroundColor: calculateBackgroundColor(colorInput),
+        subtasks: [], // 默认没有子任务
+        icon: selectedIcon, // 使用用户输入的图标
+        state: 0,
+        deadline: dateTime,
+        completed: false, // 默认未完成
+        completedtime: 0,
+        transform: "",
+        subtaskscollapsed: false,
+        updatetime: Date.now(),
+      };
+      const newTodos = [...todos, newTodo];
+      newTodos.sort((a, b) =>
         a.completed === b.completed ? 0 : a.completed ? 1 : -1
       );
-    };
-
-    public saveTodo = () => {
-      // 将新的待办事项列表保存到 localStorage
-      localStorage.setItem("todos", JSON.stringify(this.todos));
-    };
-
-    public findTodoIndex = (ID: number) => {
-      return this.todos.findIndex((todo) => todo.ID === ID);
-    };
-
-    public addTodo = (title:string,color:string,icon:string,deadline: ) => {
-      const colorInput1 = color;
-      const iconInput1 = icon;
-      const now = Date.now();
-      const newTodo = new TodoItem(
-        now,
-        title,
-        "",
-        colorInput1,
-        calculateBackgroundColor(colorInput1),
-        [],
-        iconInput1,
-        0,
-        dateTime,
-        false,
-        0,
-        "",
-        false,
-        now
-      );
-      this.todos.push(newTodo);
-      this.sortTodo();
+      // console.log(selectedIcon);
+      setTodos(newTodos);
       setInput("");
       setDateTime(0);
       setColorInput("#000000"); // 重置颜色输入
       setSelectedIcon(""); // 重置图标输入
-      this.saveTodo();
-    };
 
-    /**
-     * delTodo
-     */
-    public delTodo = (ID: number) => {
-      const index = this.findTodoIndex(ID);
-      if (index !== -1) {
-        deletedTodos.push(this.todos[index]);
-        this.todos.splice(index, 1);
-        this.saveTodo();
+      // 将新的待办事项列表保存到 localStorage
+      localStorage.setItem("todos", JSON.stringify(newTodos));
+    }
+  };
+
+  const addTodoFix = (e: React.FormEvent, data) => {
+    e.preventDefault();
+    if (input) {
+      const now = Date.now();
+      const newTodo: TodoItem = {
+        ID: now,
+        text: input,
+        timestamp: now,
+        describe: "",
+        color: colorInput, // 使用用户输入的颜色
+        backgroundColor: calculateBackgroundColor(colorInput),
+        subtasks: [], // 默认没有子任务
+        icon: selectedIcon, // 使用用户输入的图标
+        state: 0,
+        deadline: dateTime,
+        completed: false, // 默认未完成
+        completedtime: 0,
+        transform: "",
+        subtaskscollapsed: false,
+        updatetime: Date.now(),
+      };
+      const newTodos = [...todos, newTodo];
+      newTodos.sort((a, b) =>
+        a.completed === b.completed ? 0 : a.completed ? 1 : -1
+      );
+      // console.log(selectedIcon);
+      setTodos(newTodos);
+      setInput("");
+      setDateTime(0);
+      setColorInput("#000000"); // 重置颜色输入
+      setSelectedIcon(""); // 重置图标输入
+
+      // 将新的待办事项列表保存到 localStorage
+      localStorage.setItem("todos", JSON.stringify(newTodos));
+    }
+  };
+
+  const delTodo = (ID: number) => {
+    // 首先找到要删除的todo项
+    for (let i = 0; i < todos.length; i++) {
+      if (todos[i].ID === ID) {
+        const deletedTodo = todos[i];
+        if (deletedTodo) {
+          setDeletedTodos([...deletedTodos, deletedTodo]);
+        }
+        // 过滤掉具有指定ID的todo项
+        const newTodos = todos.filter((todo) => todo.ID !== ID);
+        // 更新todos状态
+        setTodos(newTodos);
+        // 更新localStorage中的数据
+        localStorage.setItem("todos", JSON.stringify(newTodos));
       }
-    };
-
-    public undoDelTodo = () => {
-      const todo = deletedTodos.pop();
-      if (todo) {
-        this.todos.push(todo);
-        this.sortTodo();
-        this.saveTodo();
-      }
-    };
-
-    public undoDelSubtask = () => {
-      const subtask = deletedSubtasks.pop();
-      for (const todo of this.todos) {
-        if (subtask?.origin === todo.ID) {
-          todo.subtasks.push(subtask);
-          this.saveTodo();
-          return;
+    }
+    // 如果找到了要删除的todo项，则将其添加到deletedTodos数组中
+  };
+  const undoDelTodo = () => {
+    if (deletedTodos.length > 0) {
+      const lastDeletedTodo = deletedTodos[deletedTodos.length - 1];
+      const newTodos = [...todos, lastDeletedTodo];
+      newTodos.sort((a, b) =>
+        a.completed === b.completed ? 0 : a.completed ? 1 : -1
+      );
+      setTodos(newTodos);
+      setDeletedTodos(deletedTodos.slice(0, -1));
+      localStorage.setItem("todos", JSON.stringify(newTodos));
+    }
+  };
+  const completeTodo = (index: number) => {
+    const newTodos = [...todos];
+    newTodos[index].completed = !newTodos[index].completed;
+    newTodos.sort((a, b) =>
+      a.completed === b.completed ? 0 : a.completed ? 1 : -1
+    );
+    if (newTodos[index].completed) {
+      newTodos[index].completedtime = Date.now();
+    } else {
+      newTodos[index].completedtime = 0;
+    }
+    setTodos(newTodos);
+    todoRefreshTime(index);
+    localStorage.setItem("todos", JSON.stringify(newTodos));
+  };
+  const changeDeadline = (Date: Date, index: number) => {
+    setChangeDateTime(Date);
+    setShowPickerinTask(false);
+    setTodos((prevTodos) => {
+      const newTodos = [...prevTodos];
+      newTodos[index].deadline = Date;
+      todoRefreshTime(index);
+      return newTodos;
+    });
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
+  const moveUpOrDown = (index: number, direction: number) => {
+    const newTodos = [...todos];
+    const temp = newTodos[index];
+    newTodos[index] = newTodos[index + direction];
+    if (index + direction < 0 || index + direction >= newTodos.length) {
+      return;
+    } else {
+      newTodos[index + direction] = temp;
+    }
+    setTodos(newTodos);
+    localStorage.setItem("todos", JSON.stringify(newTodos));
+  };
+  const moveTop = (index: number) => {
+    const newTodos = [...todos];
+    const temp = newTodos[index];
+    newTodos.splice(index, 1);
+    newTodos.unshift(temp);
+    setTodos(newTodos);
+    localStorage.setItem("todos", JSON.stringify(newTodos));
+  };
+  const addSubtask = (
+    event: React.FormEvent<HTMLFormElement>,
+    index: number
+  ) => {
+    event.preventDefault();
+    setTodos((prevTodos) => {
+      const newTodos = [...prevTodos];
+      const NewSubTask = {
+        text: subInput,
+        completed: false,
+        origin: newTodos[index].ID,
+        index: Date.now(),
+        selfcollapsed: false,
+      };
+      newTodos[index].subtasks.push(NewSubTask);
+      return newTodos;
+    });
+    setSubInput("");
+    setAddSubtasksPanel(false);
+    todoRefreshTime(index);
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
+  const addSubtaskforButton = (index: number) => {
+    setTodos((prevTodos) => {
+      const newTodos = [...prevTodos];
+      const NewSubTask = {
+        text: subInput,
+        completed: false,
+        origin: newTodos[index].ID,
+        index: newTodos[index].subtasks.length,
+        selfcollapsed: false,
+      };
+      newTodos[index].subtasks.push(NewSubTask);
+      return newTodos;
+    });
+    setSubInput("");
+    setAddSubtasksPanel(false);
+    todoRefreshTime(index);
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
+  const delSubtask = (index: number, subtaskID: number) => {
+    setTodos((prevTodos) => {
+      const newTodos = [...prevTodos];
+      // 确保对应的todo存在
+      if (!newTodos[index]) return prevTodos; // 如果不存在，直接返回原始todos
+      for (let i = 0; i < newTodos[index].subtasks.length; i++) {
+        if (newTodos[index].subtasks[i].index === subtaskID) {
+          const deletedSubtask = newTodos[index].subtasks.splice(i, 1)[0];
+          //@ts-ignore
+          setUndoStack([...undoStack, deletedSubtask]);
+          todoRefreshTime(index);
         }
       }
-    };
+      return newTodos;
+    });
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
+  const completeSubtask = (index: number, subindex: number, check: boolean) => {
+    setTodos((prevTodos) => {
+      const newTodos = [...prevTodos];
+      newTodos[index].subtasks[subindex].completed = check;
+      todoRefreshTime(index);
+      return newTodos;
+    });
 
-    public moveTodo = (ID: number, direction: number) => {
-      const index = this.findTodoIndex(ID);
-      if (index !== -1) {
-        const newIndex = index + direction;
-        if (newIndex >= 0 && newIndex < this.todos.length) {
-          const todo = this.todos[index];
-          this.todos.splice(index, 1);
-          this.todos.splice(newIndex, 0, todo);
-          this.saveTodo();
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
+  const collapseSubtask = (index: number) => {
+    setTodos((prevTodos) => {
+      const newTodos = [...prevTodos];
+      newTodos[index].subtaskscollapsed = !newTodos[index].subtaskscollapsed;
+      return newTodos;
+    });
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
+  const undoDelSubtask = () => {
+    if (undoStack.length > 0) {
+      const newUndoStack = [...undoStack];
+      const lastDeletedSubtask = newUndoStack.pop();
+      setTodos((prevTodos) => {
+        const newTodos = [...prevTodos];
+        for (let i = 0; i < newTodos.length; i++) {
+          // @ts-ignore
+          if (newTodos[i].ID === lastDeletedSubtask.origin) {
+            // @ts-ignore
+            newTodos[i].subtasks.push(lastDeletedSubtask);
+          }
         }
-      }
-    };
+        localStorage.setItem("todos", JSON.stringify(newTodos));
+        return newTodos;
+      });
+      setUndoStack(newUndoStack);
+    }
+  };
 
-    public movetoTop = (ID: number) => {
-      const index = this.findTodoIndex(ID);
-      if (index !== -1) {
-        const todo = this.todos[index];
-        this.todos.splice(index, 1);
-        this.todos.unshift(todo);
-        this.saveTodo();
+  function UncompleteSubtaskNumber(index: number) {
+    let count = 0;
+    for (let i = 0; i < todos[index].subtasks.length; i++) {
+      if (!todos[index].subtasks[i].completed) {
+        count++;
       }
-    };
-    public UncompleteSubtaskNumber = (ID: number) => {
-      const todo = this.todos.find((todo) => todo.ID === ID);
-      if (!todo || !todo.subtasks) {
-        return 0;
-      }
-      return todo.subtasks.filter((subtask) => !subtask.completed).length;
-    };
+    }
+    return count;
   }
-  const [manager] = useState(new TodoManager());
+  const todoRefreshTime = (index: number) => {
+    setTodos((prevTodos) => {
+      const newTodos = [...prevTodos];
+      newTodos[index].updatetime = Date.now();
+      return newTodos;
+    });
+    localStorage.setItem("todos", JSON.stringify(todos));
+  };
+
   return (
     <div className="Todo">
       {/* 主界面 */}
@@ -462,10 +542,10 @@ export const Todo = () => {
       >
         <div className="mt-4">
           <form
-            onSubmit={manager.addTodo}
+            onSubmit={addTodo}
             onKeyDown={(event) => {
               if (event.ctrlKey && event.key === "Enter") {
-                manager.addTodo();
+                addTodo(event);
               }
             }}
           >
@@ -479,7 +559,7 @@ export const Todo = () => {
             />
             <div>
               <div style={{ display: "flex", alignItems: "center" }}>
-                <Button onClick={manager.addTodo} style={{ width: "50%" }}>
+                <Button onClick={addTodo} style={{ width: "50%" }}>
                   <FontAwesomeIcon icon={faPlus} />
                 </Button>
                 <ColorPicker
@@ -546,11 +626,8 @@ export const Todo = () => {
               </div>
             </div>
           </form>
-          <Button onClick={manager.undoDelTodo}>撤销删除Todo</Button>
-          <Button
-            onClick={manager.undoDelSubtask}
-            style={{ marginLeft: "10px" }}
-          >
+          <Button onClick={undoDelTodo}>撤销删除</Button>
+          <Button onClick={undoDelSubtask} style={{ marginLeft: "10px" }}>
             撤销删除子任务
           </Button>
           <Divider className="mt-2" />
@@ -560,8 +637,8 @@ export const Todo = () => {
       {/* 主界面 */}
 
       {/* 待办事项列表 */}
-      <ul className="TodoMain" style={{ marginTop: "190px" }}>
-        {manager.todos.map((todo, index) => (
+      <ul className="TodoMain" style={{ marginTop: "190px", display: "flex" }}>
+        {todos.map((todo, index) => (
           <div
             className="todo"
             key={index}
@@ -570,7 +647,9 @@ export const Todo = () => {
                 ? "1px solid gray"
                 : `1px solid ${todo.color}`, // 添加边框
               backgroundColor: `${
-                todo.completed ? "rgba(211,211,211,0.5)" : todo.backgroundColor
+                todo.completed
+                  ? "rgba(211,211,211,0.5)"
+                  : todos[index].backgroundColor
               }`,
             }}
             onMouseEnter={() => {
@@ -618,20 +697,20 @@ export const Todo = () => {
                         <FontAwesomeIcon
                           icon={faAngleDown}
                           className={`mr-2 rotate-icon ${
-                            todo.subtaskscollapsed ? "collapsed" : ""
+                            todos[index].subtaskscollapsed ? "collapsed" : ""
                           }`}
                           style={{
                             fontSize: "30px",
                           }}
                           onClick={() => {
-                            todo.collapseSubtask();
+                            collapseSubtask(index);
                           }}
                         ></FontAwesomeIcon>
                         {hoverIndex === index && isEditing ? (
                           <input
                             className="inputInSubtasks"
-                            value={todo.title}
-                            onChange={(e) => todo.changeTitle(e.target.value)}
+                            value={todos[index].text}
+                            onChange={(e) => titleChange(e, index)}
                             onBlur={() => {
                               setIsEditing(false);
                             }}
@@ -643,7 +722,7 @@ export const Todo = () => {
                               setIsEditing(true);
                             }}
                           >
-                            {todo.title}
+                            {todo.text}
                           </span>
                         )}
                         <div
@@ -652,7 +731,7 @@ export const Todo = () => {
                             borderRadius: "30%",
                             backgroundColor: todo.completed
                               ? "rgba(211,211,211,0.5)"
-                              : calculateBackgroundColor2(todo.color),
+                              : calculateBackgroundColor2(todos[index].color),
                           }}
                         >
                           <span
@@ -662,67 +741,19 @@ export const Todo = () => {
                               fontSize: "18px",
                             }}
                           >
-                            {manager.UncompleteSubtaskNumber(todo.ID)}
+                            {UncompleteSubtaskNumber(index)}
                           </span>
                         </div>
                       </div>
                       {/*图标*/}
                       <div style={{ display: "flex" }}>
-                        {todo.icon === "" ? (
-                          <>
-                            {hoverIndex === index && (
-                              <div style={{ position: "relative" }}>
-                                <FontAwesomeIcon
-                                  icon={faPlus}
-                                  style={{ fontSize: "30px" }}
-                                  onClick={() => {
-                                    setChangeIconPanel(!changeIconPanel);
-                                  }}
-                                />
-                                {hoverIndex === index && changeIconPanel && (
-                                  <Select
-                                    className="fadeIn cicon"
-                                    showSearch={true}
-                                    placeholder="请选择图标"
-                                    onChange={(e) =>
-                                      todo.changeIcon(e.toString())
-                                    }
-                                  >
-                                    {iconOptions.map((option) => (
-                                      <Option key={option.key}>
-                                        {option.text}
-                                      </Option>
-                                    ))}
-                                  </Select>
-                                )}
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <div style={{ position: "relative" }}>
-                            <FontAwesomeIcon
-                              icon={fas[todo.icon]}
-                              style={{ fontSize: "30px" }}
-                              onClick={() =>
-                                setChangeIconPanel(!changeIconPanel)
-                              }
-                            />
-                            {hoverIndex === index && changeIconPanel && (
-                              <Select
-                                className="fadeIn cicon"
-                                showSearch={true}
-                                placeholder="请选择图标"
-                                onChange={(e) => todo.changeIcon(e.toString())}
-                              >
-                                {iconOptions.map((option) => (
-                                  <Option key={option.key}>
-                                    {option.text}
-                                  </Option>
-                                ))}
-                              </Select>
-                            )}
-                          </div>
-                        )}
+                        <Icon
+                          IconSelect={(value) => {
+                            changeIconFix(todo.ID, value);
+                          }}
+                          onIconInput={todo.icon === "" ? "faPlus" : todo.icon}
+                          show={todo.icon === "" ? hoverIndex === index : true}
+                        />
                       </div>
                       {/*图标*/}
                     </div>
@@ -732,7 +763,7 @@ export const Todo = () => {
                         key={index}
                         style={{ display: "flex", flexDirection: "column" }}
                         className={`subtaskcollapse ${
-                          todo.subtaskscollapsed ? "collapsed" : ""
+                          todos[index].subtaskscollapsed ? "collapsed" : ""
                         }`}
                         onMouseLeave={(e) => {
                           handleMouseLeaveinSubtask(e);
@@ -750,12 +781,18 @@ export const Todo = () => {
                               <div className="flex content-center items-center">
                                 <Checkbox
                                   key={subindex}
-                                  checked={todo.subtasks[subindex].completed}
-                                  onChange={() => {
-                                    subtask.completeSubtask();
+                                  checked={
+                                    todos[index].subtasks[subindex].completed
+                                  }
+                                  onChange={(e) => {
+                                    completeSubtask(
+                                      index,
+                                      subindex,
+                                      e.target.checked
+                                    );
                                   }}
                                   style={{
-                                    color: todo.color,
+                                    color: todos[index].color,
                                   }}
                                 />
 
@@ -765,9 +802,11 @@ export const Todo = () => {
                                   isEditingSubtask ? (
                                     <textarea
                                       className="ccontentinstask"
-                                      value={todo.subtasks[subindex].text}
+                                      value={
+                                        todos[index].subtasks[subindex].text
+                                      }
                                       onChange={(e) =>
-                                        subtask.subtaskChange(e.target.value)
+                                        subtaskChange(e, index, subindex)
                                       }
                                       onBlur={() => {
                                         setIsEditingSubtask(false);
@@ -799,7 +838,12 @@ export const Todo = () => {
                                 <FontAwesomeIcon
                                   icon={faTrash}
                                   style={{ marginLeft: "10px" }}
-                                  onClick={() => todo.delSubtask(subtask.index)}
+                                  onClick={() =>
+                                    delSubtask(
+                                      index,
+                                      todos[index].subtasks[subindex].index
+                                    )
+                                  }
                                 />
                               )}
                             </div>
@@ -813,15 +857,15 @@ export const Todo = () => {
                           className="fadeIn"
                           style={{
                             border: `1px solid ${
-                              todo.completed ? "gray" : todo.color
+                              todo.completed ? "gray" : todos[index].color
                             }`,
                             background: todo.completed
                               ? "rgba(211,211,211,0.5)"
-                              : todo.backgroundColor,
-                            color: todo.completed ? "gray" : todo.color,
+                              : todos[index].backgroundColor,
+                            color: todo.completed ? "gray" : todos[index].color,
                           }}
                           onClick={() => {
-                            todo.addSubtask(subInput);
+                            addSubtaskforButton(index);
                           }}
                         >
                           <div
@@ -836,7 +880,7 @@ export const Todo = () => {
                         <div>
                           <form
                             onSubmit={(event) => {
-                              todo.addSubtask(event.toString());
+                              addSubtask(event, index);
                             }}
                           >
                             <input
@@ -854,14 +898,15 @@ export const Todo = () => {
                       </div>
                     )}
                     <div style={{ position: "relative" }}>
-                      {todo.deadline !== 0 ? (
+                      {todos[index].deadline !== 0 ? (
                         <p
                           style={{ marginTop: "20px", fontSize: "10px" }}
                           onClick={() => {
                             setShowPickerinTask(!showPickerinTask);
                           }}
                         >
-                          期限 {new Date(todo.deadline).toLocaleString()}
+                          期限{" "}
+                          {new Date(todos[index].deadline).toLocaleString()}
                         </p>
                       ) : (
                         hoverIndex === index && (
@@ -872,12 +917,14 @@ export const Todo = () => {
                             }}
                             style={{
                               border: `1px solid ${
-                                todo.completed ? "gray" : todo.color
+                                todo.completed ? "gray" : todos[index].color
                               }`,
                               background: todo.completed
                                 ? "rgba(211,211,211,0.5)"
-                                : todo.backgroundColor,
-                              color: todo.completed ? "gray" : todo.color,
+                                : todos[index].backgroundColor,
+                              color: todo.completed
+                                ? "gray"
+                                : todos[index].color,
                             }}
                           >
                             {changeDateTime === 0
@@ -892,7 +939,9 @@ export const Todo = () => {
                           onBlur={() => setShowPickerinTask(false)}
                         >
                           <MyCalendar
-                            onSelect={(date) => todo.changeDDL(date.toDate())}
+                            onSelect={(date) =>
+                              changeDeadline(date.toDate(), index)
+                            }
                           ></MyCalendar>
                         </div>
                       )}
@@ -929,14 +978,14 @@ export const Todo = () => {
                         className="fadeIn"
                         style={{
                           border: `1px solid ${
-                            todo.completed ? "gray" : todo.color
+                            todo.completed ? "gray" : todos[index].color
                           }`,
                           background: todo.completed
                             ? "rgba(211,211,211,0.5)"
-                            : todo.backgroundColor,
-                          color: todo.completed ? "gray" : todo.color,
+                            : todos[index].backgroundColor,
+                          color: todo.completed ? "gray" : todos[index].color,
                         }}
-                        onClick={() => todo.completeTodo()}
+                        onClick={() => completeTodo(index)}
                       >
                         {todo.completed ? (
                           <FontAwesomeIcon icon={faHistory} />
@@ -949,14 +998,14 @@ export const Todo = () => {
                         className="fadeIn ml-3"
                         style={{
                           border: `1px solid ${
-                            todo.completed ? "gray" : todo.color
+                            todo.completed ? "gray" : todos[index].color
                           }`,
                           background: todo.completed
                             ? "rgba(211,211,211,0.5)"
-                            : todo.backgroundColor,
-                          color: todo.completed ? "gray" : todo.color,
+                            : todos[index].backgroundColor,
+                          color: todo.completed ? "gray" : todos[index].color,
                         }}
-                        onClick={() => manager.delTodo(todo.ID)}
+                        onClick={() => delTodo(todos[index].ID)}
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </Button>
@@ -965,10 +1014,8 @@ export const Todo = () => {
                         className="fadeIn z-2 ml-3"
                         presets={colorpreset}
                         showText={false}
-                        defaultValue={todo.color}
-                        onChangeComplete={(e) =>
-                          todo.changeColor(e.toHexString())
-                        }
+                        defaultValue={todos[index].color}
+                        onChangeComplete={(e) => changeColor(index, e)}
                       />
                     </div>
                     <p
@@ -988,14 +1035,14 @@ export const Todo = () => {
                       className="fadeIn ml-5 "
                       style={{
                         border: `1px solid ${
-                          todo.completed ? "gray" : todo.color
+                          todo.completed ? "gray" : todos[index].color
                         }`,
                         background: todo.completed
                           ? "rgba(211,211,211,0.5)"
-                          : todo.backgroundColor,
-                        color: todo.completed ? "gray" : todo.color,
+                          : todos[index].backgroundColor,
+                        color: todo.completed ? "gray" : todos[index].color,
                       }}
-                      onClick={() => manager.movetoTop(todo.ID)}
+                      onClick={() => moveTop(index)}
                     >
                       <FontAwesomeIcon icon={faArrowUp} />
                       <FontAwesomeIcon icon={faArrowUp} />
@@ -1005,14 +1052,14 @@ export const Todo = () => {
                         className="fadeIn ml-3"
                         style={{
                           border: `1px solid ${
-                            todo.completed ? "gray" : todo.color
+                            todo.completed ? "gray" : todos[index].color
                           }`,
                           background: todo.completed
                             ? "rgba(211,211,211,0.5)"
-                            : todo.backgroundColor,
-                          color: todo.completed ? "gray" : todo.color,
+                            : todos[index].backgroundColor,
+                          color: todo.completed ? "gray" : todos[index].color,
                         }}
-                        onClick={() => manager.moveTodo(index, 1)}
+                        onClick={() => moveUpOrDown(index, -1)}
                       >
                         <FontAwesomeIcon icon={faArrowUp} />
                       </Button>
@@ -1020,14 +1067,14 @@ export const Todo = () => {
                         className="fadeIn ml-3 mt-2"
                         style={{
                           border: `1px solid ${
-                            todo.completed ? "gray" : todo.color
+                            todo.completed ? "gray" : todos[index].color
                           }`,
                           background: todo.completed
                             ? "rgba(211,211,211,0.5)"
-                            : todo.backgroundColor,
-                          color: todo.completed ? "gray" : todo.color,
+                            : todos[index].backgroundColor,
+                          color: todo.completed ? "gray" : todos[index].color,
                         }}
-                        onClick={() => manager.moveTodo(index, 1)}
+                        onClick={() => moveUpOrDown(index, 1)}
                       >
                         <FontAwesomeIcon icon={faArrowDown} />
                       </Button>

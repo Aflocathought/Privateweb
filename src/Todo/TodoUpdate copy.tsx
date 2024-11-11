@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
+import "./Todo.css";
+import "../index.css";
 import { IDropdownOption } from "@fluentui/react";
-import debounce from "lodash.debounce";
-import { Option, Textarea, Divider } from "@fluentui/react-components";
-import { Select, ColorPicker, theme, Button, Checkbox } from "antd";
+import { Divider } from "@fluentui/react-components";
+import { ColorPicker, theme, Button, Checkbox } from "antd";
 import {
   cyan,
   generate,
@@ -17,9 +17,16 @@ import {
   red,
 } from "@ant-design/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, fas } from "@fortawesome/free-solid-svg-icons";
-import MyCalendar from "./Calendar";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import MyCalendar from "../Calendar/Calendar";
 import type { ColorPickerProps } from "antd";
+import { Icon } from "./Components/Icon";
+import { CombinedInput } from "./Components/CombinedInput";
+
+import {
+  calculateBackgroundColor2,
+  calculateBackgroundColor,
+} from "./TodoFunction";
 
 type Presets = Required<ColorPickerProps>["presets"][number];
 
@@ -30,6 +37,7 @@ import {
   faHistory,
   faArrowDown,
   faArrowUp,
+  faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface SubTasks {
@@ -40,7 +48,7 @@ interface SubTasks {
   selfcollapsed: boolean;
 }
 // 定义待办事项的类型
-interface TodoItem {
+export interface TodoItem {
   ID: number;
   text: string;
   timestamp: number;
@@ -65,13 +73,6 @@ declare global {
   }
 }
 
-/**
- * This function updates the backgroundColor property of each todo item in localStorage.
- * It calculates the backgroundColor based on the color property of the todo item.
- * If the todo item does not have a backgroundColor property, it adds one.
- * After updating the todo items, it saves them back to localStorage.
- * It returns a message indicating whether the update was successful or not.
- */
 window.colorTodos = function () {
   console.log(
     "此函数更新所有todos中backgroundColor的属性（如果没有）。由每个todo的color属性去计算backgroundColor。"
@@ -101,28 +102,9 @@ window.clearTodos = function () {
   }
 };
 
-function calculateBackgroundColor(color: string) {
-  let r =
-    parseInt(color.slice(1, 3), 16) + 70 > 255
-      ? 255
-      : parseInt(color.slice(1, 3), 16) + 70;
-  let g =
-    parseInt(color.slice(3, 5), 16) + 70 > 255
-      ? 255
-      : parseInt(color.slice(3, 5), 16) + 70;
-  let b =
-    parseInt(color.slice(5, 7), 16) + 70 > 255
-      ? 255
-      : parseInt(color.slice(5, 7), 16) + 70;
-  let a = 0.18;
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
-
 export const Todo = () => {
   // #region Variables
   const [todos, setTodos] = useState<TodoItem[]>([]);
-
-  const [input, setInput] = useState<string>("");
   const [subInput, setSubInput] = useState<string>("");
 
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
@@ -137,19 +119,13 @@ export const Todo = () => {
     key: iconName,
     text: iconName,
   }));
-
-  const [dateTime, setDateTime] = useState<Date | number>(0);
   const [changeDateTime, setChangeDateTime] = useState<Date | number>(0);
-  const [showPicker, setShowPicker] = useState(false);
   const [showPickerinTask, setShowPickerinTask] = useState(false);
 
   const [changeIconPanel, setChangeIconPanel] = useState(false);
-  const [selectedIcon, setSelectedIcon] = useState("");
   const [_, setAddSubtasksPanel] = useState(false);
 
-  const [colorInput, setColorInput] = useState<string>("#000000");
   const [__, setChangeColorPanel] = useState(false);
-  const debouncedSetColorInput = debounce(setColorInput, 100);
   const genPresets = (presets = presetPalettes) =>
     Object.entries(presets).map<Presets>(([label, colors]) => ({
       label,
@@ -171,7 +147,7 @@ export const Todo = () => {
   const [typing, setTyping] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingSubtask, setIsEditingSubtask] = useState(false);
- 
+
   iconOptions.unshift({ key: "", text: "无（请选择图标）" });
   // #endregion
 
@@ -202,11 +178,15 @@ export const Todo = () => {
    * @param index
    * @param iconName
    */
-  const changeIcon = (index: number, iconName: string) => {
-    todos[index].icon = iconName;
-    setChangeIconPanel(false);
-    todoRefreshTime(index);
-    localStorage.setItem("todos", JSON.stringify(todos));
+
+  const changeIconFix = (ID: number, iconName: string) => {
+    for (let i = 0; i < todos.length; i++) {
+      if (todos[i].ID === ID) {
+        todos[i].icon = iconName;
+        todoRefreshTime(i);
+        localStorage.setItem("todos", JSON.stringify(todos));
+      }
+    }
   };
 
   /**
@@ -274,63 +254,24 @@ export const Todo = () => {
 
     setIsEditingSubtask(false);
   };
-  function calculateBackgroundColor2(color: string) {
-    let r =
-      parseInt(color.slice(1, 3), 16) + 35 > 255
-        ? 255
-        : parseInt(color.slice(1, 3), 16) + 35;
-    let g =
-      parseInt(color.slice(3, 5), 16) + 35 > 255
-        ? 255
-        : parseInt(color.slice(3, 5), 16) + 35;
-    let b =
-      parseInt(color.slice(5, 7), 16) + 35 > 255
-        ? 255
-        : parseInt(color.slice(5, 7), 16) + 35;
-    let a = 0.25;
-    return `rgba(${r}, ${g}, ${b}, ${a})`;
-  }
 
   /**
    * 添加新的待办事项
    * @param e
    */
-  const addTodo = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (input) {
-      const now = Date.now();
-      const newTodo: TodoItem = {
-        ID: now,
-        text: input,
-        timestamp: now,
-        describe: "",
-        color: colorInput, // 使用用户输入的颜色
-        backgroundColor: calculateBackgroundColor(colorInput),
-        subtasks: [], // 默认没有子任务
-        icon: selectedIcon, // 使用用户输入的图标
-        state: 0,
-        deadline: dateTime,
-        completed: false, // 默认未完成
-        completedtime: 0,
-        transform: "",
-        subtaskscollapsed: false,
-        updatetime: Date.now(),
-      };
-      const newTodos = [...todos, newTodo];
-      newTodos.sort((a, b) =>
-        a.completed === b.completed ? 0 : a.completed ? 1 : -1
-      );
-      // console.log(selectedIcon);
-      setTodos(newTodos);
-      setInput("");
-      setDateTime(0);
-      setColorInput("#000000"); // 重置颜色输入
-      setSelectedIcon(""); // 重置图标输入
 
-      // 将新的待办事项列表保存到 localStorage
-      localStorage.setItem("todos", JSON.stringify(newTodos));
-    }
+  const addTodo = (data: TodoItem) => {
+    const newTodos = [...todos, data];
+    newTodos.sort((a, b) =>
+      a.completed === b.completed ? 0 : a.completed ? 1 : -1
+    );
+    // console.log(selectedIcon);
+    setTodos(newTodos);
+
+    // 将新的待办事项列表保存到 localStorage
+    localStorage.setItem("todos", JSON.stringify(newTodos));
   };
+
   const delTodo = (ID: number) => {
     // 首先找到要删除的todo项
     for (let i = 0; i < todos.length; i++) {
@@ -520,130 +461,59 @@ export const Todo = () => {
     localStorage.setItem("todos", JSON.stringify(todos));
   };
 
+  const getTodoColorStyle = (ID: number) => {
+    for (let i = 0; i < todos.length; i++) {
+      if (todos[i].ID === ID) {
+        return {
+          border: `1px solid ${todos[i].completed ? "gray" : todos[i].color}`,
+          background: todos[i].completed
+            ? "rgba(211,211,211,0.5)"
+            : todos[i].backgroundColor,
+          color: todos[i].completed ? "gray" : todos[i].color,
+        };
+      }
+    }
+  };
+
   return (
     <div className="Todo">
       {/* 主界面 */}
       <div
         style={{
-          position: "fixed",
           top: 0,
           backgroundColor: "white",
           width: "400px",
+          height: "100%",
           zIndex: 100,
+          marginRight: "10px",
         }}
       >
-        <div className="mt-4">
-          <form
-            onSubmit={addTodo}
-            onKeyDown={(event) => {
-              if (event.ctrlKey && event.key === "Enter") {
-                addTodo(event);
-              }
+        <div className="mt-4 flex-col">
+          <CombinedInput
+            exportData={(data) => {
+              addTodo(data);
             }}
-          >
-            <Textarea
-              className="TodoInputtask"
-              onCompositionStart={() => setTyping(true)}
-              onCompositionEnd={() => setTyping(false)}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="今天要做什么……"
-            />
-            <div>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <Button onClick={addTodo} style={{ width: "50%" }}>
-                  <FontAwesomeIcon icon={faPlus} />
-                </Button>
-                <ColorPicker
-                  className="ml-2"
-                  value={colorInput}
-                  presets={colorpreset}
-                  showText={false}
-                  onChange={(e) => debouncedSetColorInput(e.toHexString())}
-                />
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <Select
-                    showSearch={true}
-                    defaultValue=""
-                    placeholder="请选择图标"
-                    onChange={(e) => setSelectedIcon(e)}
-                    onSearch={() => setTyping(true)}
-                    onBlur={() => setTyping(false)}
-                    style={{
-                      width: "180px",
-                      height: "40px",
-                      marginLeft: "10px",
-                    }}
-                  >
-                    {iconOptions.map((option) => (
-                      <Option key={option.key}>{option.text}</Option>
-                    ))}
-                  </Select>
-                  <div style={{ marginLeft: "10px" }}>
-                    {selectedIcon === "" ? null : (
-                      <FontAwesomeIcon icon={fas[selectedIcon]} />
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div style={{ position: "relative" }}>
-                <Button
-                  className="mt-1"
-                  onClick={() => {
-                    setShowPicker(!showPicker);
-                  }}
-                >
-                  {dateTime === 0 ? "添加截止时间" : dateTime.toLocaleString()}
-                </Button>
-                {showPicker && (
-                  <>
-                    <div
-                      style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                      }}
-                      onClick={() => setShowPicker(false)} // 点击遮罩层隐藏组件
-                    />
-                    <div className="calendarininput">
-                      <MyCalendar
-                        onButtonClick={(value) => setDateTime(value)}
-                        onSelect={(date) => setDateTime(date.toDate())}
-                      ></MyCalendar>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </form>
-          <Button onClick={undoDelTodo}>撤销删除</Button>
-          <Button onClick={undoDelSubtask} style={{ marginLeft: "10px" }}>
-            撤销删除子任务
-          </Button>
+          />
+          <div>
+            <Button onClick={undoDelTodo}>撤销删除</Button>
+            <Button onClick={undoDelSubtask} style={{ marginLeft: "10px" }}>
+              撤销删除子任务
+            </Button>
+          </div>
           <Divider className="mt-2" />
         </div>
+        <div></div>
       </div>
 
       {/* 主界面 */}
 
       {/* 待办事项列表 */}
-      <ul className="TodoMain" style={{ marginTop: "190px" }}>
+      <ul className="TodoMain" style={{ marginLeft: "10px", display: "flex" }}>
         {todos.map((todo, index) => (
           <div
             className="todo"
             key={index}
-            style={{
-              border: todo.completed
-                ? "1px solid gray"
-                : `1px solid ${todo.color}`, // 添加边框
-              backgroundColor: `${
-                todo.completed
-                  ? "rgba(211,211,211,0.5)"
-                  : todos[index].backgroundColor
-              }`,
-            }}
+            style={getTodoColorStyle(todo.ID)}
             onMouseEnter={() => {
               setHoverIndex(index);
             }}
@@ -739,59 +609,13 @@ export const Todo = () => {
                       </div>
                       {/*图标*/}
                       <div style={{ display: "flex" }}>
-                        {todo.icon === "" ? (
-                          <>
-                            {hoverIndex === index && (
-                              <div style={{ position: "relative" }}>
-                                <FontAwesomeIcon
-                                  icon={faPlus}
-                                  style={{ fontSize: "30px" }}
-                                  onClick={() => {
-                                    setChangeIconPanel(!changeIconPanel);
-                                  }}
-                                />
-                                {hoverIndex === index && changeIconPanel && (
-                                  <Select
-                                    className="fadeIn cicon"
-                                    showSearch={true}
-                                    placeholder="请选择图标"
-                                    onChange={(e) => changeIcon(index, e)}
-                                  >
-                                    {iconOptions.map((option) => (
-                                      <Option key={option.key}>
-                                        {option.text}
-                                      </Option>
-                                    ))}
-                                  </Select>
-                                )}
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <div style={{ position: "relative" }}>
-                            <FontAwesomeIcon
-                              icon={fas[todo.icon]}
-                              style={{ fontSize: "30px" }}
-                              onClick={() =>
-                                setChangeIconPanel(!changeIconPanel)
-                              }
-                            />
-                            {hoverIndex === index && changeIconPanel && (
-                              <Select
-                                className="fadeIn cicon"
-                                showSearch={true}
-                                placeholder="请选择图标"
-                                onChange={(e) => changeIcon(index, e)}
-                              >
-                                {iconOptions.map((option) => (
-                                  <Option key={option.key}>
-                                    {option.text}
-                                  </Option>
-                                ))}
-                              </Select>
-                            )}
-                          </div>
-                        )}
+                        <Icon
+                          IconSelect={(value) => {
+                            changeIconFix(todo.ID, value);
+                          }}
+                          onIconInput={todo.icon === "" ? "faPlus" : todo.icon}
+                          show={todo.icon === "" ? hoverIndex === index : true}
+                        />
                       </div>
                       {/*图标*/}
                     </div>
@@ -893,15 +717,7 @@ export const Todo = () => {
                       <div className="flex content-center mt-2">
                         <Button
                           className="fadeIn"
-                          style={{
-                            border: `1px solid ${
-                              todo.completed ? "gray" : todos[index].color
-                            }`,
-                            background: todo.completed
-                              ? "rgba(211,211,211,0.5)"
-                              : todos[index].backgroundColor,
-                            color: todo.completed ? "gray" : todos[index].color,
-                          }}
+                          style={getTodoColorStyle(todo.ID)}
                           onClick={() => {
                             addSubtaskforButton(index);
                           }}
@@ -910,7 +726,7 @@ export const Todo = () => {
                             className="items-center"
                             style={{ display: "flex" }}
                           >
-                            <FontAwesomeIcon icon={faPlus} className="mr-1"/>
+                            <FontAwesomeIcon icon={faPlus} className="mr-1" />
                             <p>添加子任务</p>
                           </div>
                         </Button>
@@ -953,17 +769,7 @@ export const Todo = () => {
                             onClick={() => {
                               setShowPickerinTask(!showPickerinTask);
                             }}
-                            style={{
-                              border: `1px solid ${
-                                todo.completed ? "gray" : todos[index].color
-                              }`,
-                              background: todo.completed
-                                ? "rgba(211,211,211,0.5)"
-                                : todos[index].backgroundColor,
-                              color: todo.completed
-                                ? "gray"
-                                : todos[index].color,
-                            }}
+                            style={getTodoColorStyle(todo.ID)}
                           >
                             {changeDateTime === 0
                               ? "添加截止时间"
@@ -1014,15 +820,7 @@ export const Todo = () => {
                     >
                       <Button
                         className="fadeIn"
-                        style={{
-                          border: `1px solid ${
-                            todo.completed ? "gray" : todos[index].color
-                          }`,
-                          background: todo.completed
-                            ? "rgba(211,211,211,0.5)"
-                            : todos[index].backgroundColor,
-                          color: todo.completed ? "gray" : todos[index].color,
-                        }}
+                        style={getTodoColorStyle(todo.ID)}
                         onClick={() => completeTodo(index)}
                       >
                         {todo.completed ? (
@@ -1034,15 +832,7 @@ export const Todo = () => {
 
                       <Button
                         className="fadeIn ml-3"
-                        style={{
-                          border: `1px solid ${
-                            todo.completed ? "gray" : todos[index].color
-                          }`,
-                          background: todo.completed
-                            ? "rgba(211,211,211,0.5)"
-                            : todos[index].backgroundColor,
-                          color: todo.completed ? "gray" : todos[index].color,
-                        }}
+                        style={getTodoColorStyle(todo.ID)}
                         onClick={() => delTodo(todos[index].ID)}
                       >
                         <FontAwesomeIcon icon={faTrash} />
@@ -1071,15 +861,7 @@ export const Todo = () => {
                   <div className="flex">
                     <Button
                       className="fadeIn ml-5 "
-                      style={{
-                        border: `1px solid ${
-                          todo.completed ? "gray" : todos[index].color
-                        }`,
-                        background: todo.completed
-                          ? "rgba(211,211,211,0.5)"
-                          : todos[index].backgroundColor,
-                        color: todo.completed ? "gray" : todos[index].color,
-                      }}
+                      style={getTodoColorStyle(todo.ID)}
                       onClick={() => moveTop(index)}
                     >
                       <FontAwesomeIcon icon={faArrowUp} />
@@ -1088,30 +870,14 @@ export const Todo = () => {
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <Button
                         className="fadeIn ml-3"
-                        style={{
-                          border: `1px solid ${
-                            todo.completed ? "gray" : todos[index].color
-                          }`,
-                          background: todo.completed
-                            ? "rgba(211,211,211,0.5)"
-                            : todos[index].backgroundColor,
-                          color: todo.completed ? "gray" : todos[index].color,
-                        }}
+                        style={getTodoColorStyle(todo.ID)}
                         onClick={() => moveUpOrDown(index, -1)}
                       >
                         <FontAwesomeIcon icon={faArrowUp} />
                       </Button>
                       <Button
                         className="fadeIn ml-3 mt-2"
-                        style={{
-                          border: `1px solid ${
-                            todo.completed ? "gray" : todos[index].color
-                          }`,
-                          background: todo.completed
-                            ? "rgba(211,211,211,0.5)"
-                            : todos[index].backgroundColor,
-                          color: todo.completed ? "gray" : todos[index].color,
-                        }}
+                        style={getTodoColorStyle(todo.ID)}
                         onClick={() => moveUpOrDown(index, 1)}
                       >
                         <FontAwesomeIcon icon={faArrowDown} />
@@ -1124,7 +890,6 @@ export const Todo = () => {
             {/*隐藏起来的元素*/}
           </div>
         ))}
-        <div style={{ height: "200px", width: "100%" }} />
       </ul>
       {/* 待办事项列表 */}
     </div>

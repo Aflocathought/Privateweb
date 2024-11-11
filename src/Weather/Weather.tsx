@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import "./App.css";
+import "../App.css";
 import { Divider } from "@fluentui/react-components";
 import ReactECharts from "echarts-for-react";
 // @ts-ignore

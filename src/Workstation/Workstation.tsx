@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from "react";
-import "./App.css";
+import "../App.css";
 import { Divider } from "@fluentui/react-components";
 
-import { WeatherChart } from "./Weather";
-import { Classtable } from "./Classtable";
-import { Todo } from "./TodoUpdate";
-import { Mouse } from "./Mouse";
+import { WeatherChart } from "../Weather/Weather";
+import { Classtable } from "../Classtable";
+import { Todo } from "../Todo/TodoUpdate copy";
+import { Mouse } from "../Mouse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faList,
@@ -57,10 +57,6 @@ export const Workstation = () => {
   useEffect(() => {
     if (!hasInitialized.current) {
       setWindowList([
-        "Classtable",
-        "Divider",
-        "WeatherChart",
-        "Divider",
         "Todo",
       ]);
       hasInitialized.current = true;

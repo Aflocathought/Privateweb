@@ -7,7 +7,7 @@ import {  Select, ColorPicker, theme, Button, Checkbox } from "antd";
 import { generate, green, presetPalettes, red } from "@ant-design/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import MyCalendar from "./Calendar";
+import MyCalendar from "../Calendar/Calendar";
 import type { ColorPickerProps } from "antd";
 
 type Presets = Required<ColorPickerProps>["presets"][number];

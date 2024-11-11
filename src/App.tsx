@@ -1,12 +1,6 @@
-import { useState } from "react";
 import "./App.css";
-import { TextareaProps } from "@fluentui/react-components";
-
-import { Time } from "./Time";
-import { Workstation } from "./Workstation";
-import { EverydayPic } from "./EverydayPic";
-import { WebsiteFavorite } from "./WebsiteFavorite";
-import { DraggableList } from "./DraggableList";
+import { Appcontext } from "./AppContext/AppContext";
+import { AppRenderer } from "./AppRenderer";
 
 declare global {
   interface Window {
@@ -47,63 +41,14 @@ window.shitting = function (shit: any) {
   }
 };
 
-export const Default = (props: Partial<TextareaProps>) => {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [viewPhoto, setViewPhoto] = useState<boolean>(false);
-
+export const Default = () => {
   return (
     <>
-      <div id="fullpage">
-        {/* 页面一 */}
-        <div id="section1" className="section">
-          <div
-            style={{
-              display: "flex",
-              backgroundImage: `url(${imageUrl})`,
-              backgroundSize: "cover",
-              minHeight: "100vh",
-              maxHeight: "100vh",
-              height: "auto",
-              minWidth: "100vw",
-              width: "auto",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                opacity: viewPhoto ? 0 : 1,
-              }}
-            >
-              <Workstation />
-            </div>
-            {/* 时间 */}
-            <div
-              style={{
-                position: "relative",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                opacity: viewPhoto ? 0 : 1,
-                transition: "opacity 0.3s ease-in-out",
-              }}
-            >
-              <Time />
-            </div>
-            {/* 时间 */}
-            <EverydayPic setUrl={setImageUrl} onlyViewPhoto={setViewPhoto} />
-            {/* <div className="flex flex-col justify-center">
-              <WebsiteFavorite />
-            </div> */}
-            <div className="z-10">{/* <DraggableList /> */}</div>
-          </div>
-        </div>
-      </div>
+      <AppRenderer />
     </>
   );
 };
+
 function App() {
   return <Default />;
 }
