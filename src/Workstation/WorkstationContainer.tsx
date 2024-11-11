@@ -1,5 +1,5 @@
 import { Divider } from "@fluentui/react-components";
-import { WeatherChart } from "../Weather/Weather";
+// import { WeatherChart } from "../Weather/Weather";
 import { Classtable } from "../Classtable/Classtable";
 import { Todo } from "../Todo/TodoUpdate copy";
 import { useRef, useState, useEffect } from "react";
@@ -15,7 +15,7 @@ export const WorkstationContainer: React.FC = () => {
   const componentMap: { [key: string]: React.ComponentType } = {
     Classtable: Classtable,
     Todo: Todo,
-    WeatherChart: WeatherChart,
+    // WeatherChart: WeatherChart,
     Divider: () => <Divider vertical />,
   };
 
