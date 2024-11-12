@@ -13,10 +13,7 @@
 
 .Todo {
   display: flex;
-  flex-direction:row;
-  width: auto;
-  max-height: 97.5vh;
-  height: 100%;
+  flex-direction: row;
   background-color: rgba(255, 255, 255, 1);
   padding: 15px;
   /* border: 1px solid black;
@@ -29,15 +26,27 @@
   ::-webkit-scrollbar {
     display: none;
   }
-  /* 对于 Firefox */
-  scrollbar-width: none;
-
-  /* 对于 IE 和 Edge */
-  -ms-overflow-style: none;
-
-  /* 保持滚动功能 */
-  overflow-y: auto;
+  scrollbar-width: none; /* 对于 Firefox */
+  -ms-overflow-style: none; /* 对于 IE 和 Edge */
+  overflow-y: auto; /* 保持滚动功能 */
   /* filter: blur(5px); */
+
+  .TodoMain {
+    overflow-x: auto;
+    display: flex;
+    .todo {
+      left: 2%;
+      width: 350px;
+      height: auto;
+      margin-right: 10px;
+      padding: 15px;
+      margin-top: 15px;
+      box-sizing: border-box;
+      border-radius: 15px;
+      font-family: Arial;
+      transition: height 0.4s ease-in-out;
+    }
+  }
 }
 
 .TodoInputtask {
@@ -46,19 +55,6 @@
   padding: 5px;
   border: 1px solid #bbb;
   border-radius: 4px;
-}
-
-.todo {
-  left: 2%;
-  height: auto;
-  width: 350px;
-  margin-right: 10px;
-  padding: 15px;
-  margin-top: 15px;
-  box-sizing: border-box;
-  border-radius: 15px;
-  font-family: Arial;
-  transition: height 0.4s ease-in-out;
 }
 
 .cicon {
@@ -108,16 +104,18 @@
   font-size: 15px;
   font-weight: normal;
 }
+
 .todoSubtasks {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: auto;
   min-height: 30px;
-  margin-top: 15px;
+  margin-top: 12px;
   margin-left: 20px;
   font-weight: normal;
 }
+
 .inputInSubtasks {
   background: transparent;
   border: none;
@@ -125,4 +123,4 @@
   width: 100%;
   margin-top: -3px;
 }
-/* todo中的 */
+

@@ -4,7 +4,7 @@ import "./App.css";
 
 import { Time } from "./Time/Time";
 import { Workstation } from "./Workstation/Workstation";
-import { EverydayPic } from "./EverydayPic";
+import { EverydayPic } from "./EverydayPic/EverydayPic";
 
 interface AppProps {}
 export const AppRenderer = (props?: AppProps) => {

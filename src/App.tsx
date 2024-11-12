@@ -41,16 +41,6 @@ window.shitting = function (shit: any) {
   }
 };
 
-export const Default = () => {
-  return (
-    <>
-      <AppRenderer />
-    </>
-  );
+export const App = () => {
+  return <AppRenderer />;
 };
-
-function App() {
-  return <Default />;
-}
-
-export default App;

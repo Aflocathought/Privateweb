@@ -56,7 +56,9 @@ export const WorkstationContainer: React.FC = () => {
       style={{
         display: "flex",
         flexDirection: "row",
-        height: "98%",
+        height: "auto",
+        minHeight: "100%",
+        width: "100%",
       }}
     >
       <div
@@ -66,6 +68,8 @@ export const WorkstationContainer: React.FC = () => {
           backgroundColor: "#f0f0f0", // 背景颜色，根据需要调整
           padding: "10px", // 内边距，根据需要调整
           boxSizing: "border-box",
+          height: "100vh",
+          position: "fixed",
         }}
       >
         <ul
@@ -76,10 +80,11 @@ export const WorkstationContainer: React.FC = () => {
             padding: "0",
             fontWeight: "bold",
             width: "50px",
+           
           }}
         >
           {functions.map((func, index) => (
-            <div key={index} className="flex items-center -mt-1">
+            <div key={index} className="flex items-center -mt-1 ">
               <FontAwesomeIcon
                 icon={icons[index]}
                 style={{
@@ -101,7 +106,7 @@ export const WorkstationContainer: React.FC = () => {
         </ul>
       </div>
       {/* 抽屉内容 */}
-      <div id="container" style={{ display: "flex" }}>
+      <div id="ws_container" style={{ display: "flex",marginLeft:"70px" }}>
         {windowList.map((componentName, index) => {
           const Component = componentMap[componentName];
           return Component ? <Component key={index} /> : null;

@@ -5,8 +5,8 @@ import {
   faAsterisk,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Mouse from "../Mouse/Mouse";
-import "./index.css";
+import { Mouse } from "../Mouse/Mouse";
+import "../index.css";
 
 interface EverydayPicProps {
   setUrl: (url: string) => void;
@@ -40,6 +40,7 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
       refreshable: true,
     },
     { source: "scenery_yuanfang", source_title: "远方图床", refreshable: true },
+    { source: "本地", source_title: "本地图片" },
   ]);
   const [sourceInfo, setSourceInfo] = useState("");
   const [rotate, setRotate] = useState(true);
@@ -111,6 +112,9 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
     } else if (source === "scenery_yuanfang") {
       setUrl("https://tu.ltyuanfang.cn/api/fengjing.php");
       setSourceInfo("远方图床");
+    } else if (source === "本地") {
+      setUrl("http://localhost:3000/api/v1/images/本地");
+      setSourceInfo("本地图片");
     } else {
       fetch(`http://localhost:3000/api/v1/images/${source}`)
         .then((response) => {
@@ -240,5 +244,3 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
     </div>
   );
 };
-
-export default EverydayPic;

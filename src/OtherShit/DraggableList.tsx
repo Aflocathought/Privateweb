@@ -1,5 +1,5 @@
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import ListItem from "./OtherShit/ListItem";
+import {ListItem} from "./ListItem";
 import { useState } from "react";
 
 // 用来渲染列表的数据
@@ -55,4 +55,3 @@ export const DraggableList = () => {
     </DragDropContext>
   );
 };
-export default DraggableList;

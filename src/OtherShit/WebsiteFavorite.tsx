@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Mouse from "./Mouse/Mouse";
+import { Mouse } from "../Mouse/Mouse";
 
 export const WebsiteFavorite = () => {
   const [hover1, setHover1] = useState(false);
@@ -17,7 +17,6 @@ export const WebsiteFavorite = () => {
     constructor(public name: string, public websites: Website[]) {
       this.websites = [];
       this.name = name;
-      
     }
   }
 
@@ -134,5 +133,3 @@ export const WebsiteFavorite = () => {
     </div>
   );
 };
-
-export default WebsiteFavorite;

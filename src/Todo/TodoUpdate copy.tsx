@@ -463,7 +463,6 @@ export const Todo = () => {
           top: 0,
           backgroundColor: "white",
           width: "400px",
-          height: "100%",
           zIndex: 100,
           marginRight: "10px",
         }}

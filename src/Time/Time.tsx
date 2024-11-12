@@ -52,5 +52,3 @@ export const Time = () => {
     </>
   );
 };
-
-export default Time;

@@ -94,7 +94,7 @@ export const Workstation = () => {
             opacity: hover ? 1 : 0, // 默认完全透明
             display: isOpen ? "flex" : "none", // 当抽屉展开时显示内容
             transition: "opacity 0.5s ease", // 平滑过渡效果
-            zIndex: 15, // 置于最上层
+            zIndex: 1145141, // 置于最上层
           }}
           onMouseEnter={() => {
             setHover(true);
@@ -110,6 +110,7 @@ export const Workstation = () => {
           style={{
             display: "block", // 当抽屉展开时显示内容
             height: "100vh", // 占满全屏
+            width:"100%",
             overflowY: "auto", // 内容超出时可以滚动
             pointerEvents: isOpen ? "auto" : "none",
           }}
@@ -121,4 +122,4 @@ export const Workstation = () => {
     </div>
   );
 };
-export default Workstation;
+

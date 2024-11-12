@@ -454,4 +454,3 @@ export const Subclasstable = () => {
     </>
   );
 };
-export default { Classtable, Subclasstable };

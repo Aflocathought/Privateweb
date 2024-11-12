@@ -1,6 +1,6 @@
 import {Card} from "antd";
 
-const ListItem = ({item, provided}: any) => {
+export const ListItem = ({item, provided}: any) => {
     return <div
         ref={provided.innerRef}
         {...provided.draggableProps}
@@ -12,4 +12,3 @@ const ListItem = ({item, provided}: any) => {
     </div>
 }
 
-export default ListItem

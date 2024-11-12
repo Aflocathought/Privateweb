@@ -37,5 +37,3 @@ export const Mouse: React.FC<MouseProps> = ({ setIsVisible }) => {
 
   return null;
 };
-
-export default Mouse;
