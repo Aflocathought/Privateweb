@@ -2,60 +2,26 @@ import { TodoItem } from "../TodoUpdate copy";
 import "../Todo.css";
 import "../../index.css";
 import { Option, Textarea } from "@fluentui/react-components";
-import { Select, ColorPicker, Button, theme } from "antd";
-import MyCalendar from "../../Calendar/MyCalendar";
+import { Select,  Button } from "antd";
+import { MyCalendar } from "../../Components/Base/MyCalendar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { calculateBackgroundColor } from "../TodoFunction";
 import { IDropdownOption } from "@fluentui/react";
-import debounce from "lodash.debounce";
+import { MyColorPicker } from "../../Components/Base/ColorPicker/MyColorPicker";
 
-import {
-  cyan,
-  generate,
-  gold,
-  green,
-  lime,
-  magenta,
-  orange,
-  presetPalettes,
-  purple,
-  red,
-} from "@ant-design/colors";
-import type { ColorPickerProps } from "antd";
 interface CombinedInputProps {
   exportData: (data: TodoItem) => void;
 }
-
-type Presets = Required<ColorPickerProps>["presets"][number];
 
 export const CombinedInput: React.FC<CombinedInputProps> = ({ exportData }) => {
   const [input, setInput] = useState<string>("");
   const [colorInput, setColorInput] = useState<string>("#000000");
   const [selectedIcon, setSelectedIcon] = useState("");
   const [dateTime, setDateTime] = useState<Date | number>(0);
-  const debouncedSetColorInput = debounce(setColorInput, 100);
-  const genPresets = (presets = presetPalettes) =>
-    Object.entries(presets).map<Presets>(([label, colors]) => ({
-      label,
-      colors,
-      defaultOpen: false,
-    }));
   const [showPicker, setShowPicker] = useState(false);
-  const { token } = theme.useToken();
-  const colorpreset = genPresets({
-    red,
-    magenta,
-    orange,
-    gold,
-    lime,
-    green,
-    cyan,
-    primary: generate(token.colorPrimary),
-    purple,
-  });
   const [typing, setTyping] = useState(false);
   const packingData = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,19 +105,17 @@ export const CombinedInput: React.FC<CombinedInputProps> = ({ exportData }) => {
                   />
                   <div className="calendarininput">
                     <MyCalendar
-                      onButtonClick={(value) => setDateTime(value)}
+                      noSetDate={(value) => setDateTime(value)}
                       onSelect={(date) => setDateTime(date.toDate())}
                     ></MyCalendar>
                   </div>
                 </>
               )}
             </div>
-            <ColorPicker
-              className="ml-2"
-              value={colorInput}
-              presets={colorpreset}
-              showText={false}
-              onChange={(e) => debouncedSetColorInput(e.toHexString())}
+            
+            <MyColorPicker
+              color={colorInput}
+              onSelect={(color) => setColorInput(color)}
             />
             <div style={{ display: "flex", alignItems: "center" }}>
               <Select

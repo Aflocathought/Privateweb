@@ -3,32 +3,19 @@ import "./Todo.css";
 import "../index.css";
 import { IDropdownOption } from "@fluentui/react";
 import { Divider } from "@fluentui/react-components";
-import { ColorPicker, theme, Button, Checkbox } from "antd";
-import {
-  cyan,
-  generate,
-  gold,
-  green,
-  lime,
-  magenta,
-  orange,
-  presetPalettes,
-  purple,
-  red,
-} from "@ant-design/colors";
+import { Button, Checkbox } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import MyCalendar from "../Calendar/MyCalendar";
-import type { ColorPickerProps } from "antd";
+import { MyCalendar } from "../Components/Base/MyCalendar";
 import { Icon } from "./Components/Icon";
 import { CombinedInput } from "./Components/CombinedInput";
+
+import { MyColorPicker } from "../Components/Base/ColorPicker/MyColorPicker";
 
 import {
   calculateBackgroundColor2,
   calculateBackgroundColor,
 } from "./TodoFunction";
-
-type Presets = Required<ColorPickerProps>["presets"][number];
 
 import {
   faTrash,
@@ -122,28 +109,8 @@ export const Todo = () => {
   const [changeDateTime, setChangeDateTime] = useState<Date | number>(0);
   const [showPickerinTask, setShowPickerinTask] = useState(false);
 
-  const [changeIconPanel, setChangeIconPanel] = useState(false);
   const [_, setAddSubtasksPanel] = useState(false);
 
-  const [__, setChangeColorPanel] = useState(false);
-  const genPresets = (presets = presetPalettes) =>
-    Object.entries(presets).map<Presets>(([label, colors]) => ({
-      label,
-      colors,
-      defaultOpen: false,
-    }));
-  const { token } = theme.useToken();
-  const colorpreset = genPresets({
-    red,
-    magenta,
-    orange,
-    gold,
-    lime,
-    green,
-    cyan,
-    primary: generate(token.colorPrimary),
-    purple,
-  });
   const [typing, setTyping] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingSubtask, setIsEditingSubtask] = useState(false);
@@ -474,6 +441,19 @@ export const Todo = () => {
       }
     }
   };
+  const saveTodosToFile = (todos: TodoItem[]) => {
+    const blob = new Blob([JSON.stringify(todos, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "todos.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="Todo">
@@ -499,12 +479,12 @@ export const Todo = () => {
             <Button onClick={undoDelSubtask} style={{ marginLeft: "10px" }}>
               撤销删除子任务
             </Button>
+            <Button onClick={() => saveTodosToFile(todos)} style={{ marginLeft: "10px" }}>保存Todo</Button>
           </div>
           <Divider className="mt-2" />
         </div>
         <div></div>
       </div>
-
       {/* 主界面 */}
 
       {/* 待办事项列表 */}
@@ -516,10 +496,6 @@ export const Todo = () => {
             style={getTodoColorStyle(todo.ID)}
             onMouseEnter={() => {
               setHoverIndex(index);
-            }}
-            onBlur={() => {
-              setChangeIconPanel(false);
-              setChangeColorPanel(false);
             }}
             onMouseLeave={(e) => {
               handleMouseLeave(e);
@@ -838,13 +814,12 @@ export const Todo = () => {
                         <FontAwesomeIcon icon={faTrash} />
                       </Button>
 
-                      <ColorPicker
-                        className="fadeIn z-2 ml-3"
-                        presets={colorpreset}
-                        showText={false}
-                        defaultValue={todos[index].color}
-                        onChangeComplete={(e) => changeColor(index, e)}
+                      {/* 暂时不能用不知道为啥注意一下↓ */}
+                      <MyColorPicker
+                        color={todos[index].color}
+                        onSelect={(color) => changeColor(index, color)}
                       />
+                      {/* 暂时不能用不知道为啥注意一下↑ */}
                     </div>
                     <p
                       className="fadeIn mt-1"
@@ -895,5 +870,3 @@ export const Todo = () => {
     </div>
   );
 };
-
-export default Todo;

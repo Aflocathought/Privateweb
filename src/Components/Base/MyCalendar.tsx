@@ -9,10 +9,10 @@ const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>["mode"]) => {
 };
 
 interface MyCalendarProps extends CalendarProps<Dayjs> {
-  onButtonClick?: (value: number) => void;
+  noSetDate?: (value: number) => void;
 }
 
-const MyCalendar: React.FC<MyCalendarProps> = (props) => {
+export const MyCalendar: React.FC<MyCalendarProps> = (props) => {
   const { token } = theme.useToken();
 
   const wrapperStyle: React.CSSProperties = {
@@ -23,8 +23,8 @@ const MyCalendar: React.FC<MyCalendarProps> = (props) => {
     backgroundColor: "rgba(255,255,255,1)"
   };
   const handleButtonClick = () => {
-    if (props.onButtonClick) {
-      props.onButtonClick(0);
+    if (props.noSetDate) {
+      props.noSetDate(0);
     }
   };
 
@@ -35,5 +35,3 @@ const MyCalendar: React.FC<MyCalendarProps> = (props) => {
     </div>
   );
 };
-
-export default MyCalendar;

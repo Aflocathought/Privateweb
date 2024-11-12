@@ -5,7 +5,7 @@ import {
   faAsterisk,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Mouse from "./Mouse";
+import Mouse from "../Mouse/Mouse";
 import "./index.css";
 
 interface EverydayPicProps {

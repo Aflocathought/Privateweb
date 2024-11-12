@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Mouse from "./Mouse";
+import Mouse from "./Mouse/Mouse";
 
 export const WebsiteFavorite = () => {
   const [hover1, setHover1] = useState(false);

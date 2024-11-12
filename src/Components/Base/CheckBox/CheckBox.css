@@ -1,0 +1,5 @@
+.checkbox_container {
+  transition: all 0.3s;
+  border: 1px solid;
+  border-radius: 5px;
+}

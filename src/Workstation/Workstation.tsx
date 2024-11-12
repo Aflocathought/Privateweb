@@ -1,6 +1,6 @@
 import { useEffect, useState  } from "react";
 import "../App.css";
-import { Mouse } from "../Mouse";
+import { Mouse } from "../Mouse/Mouse";
 import { WorkstationContainer } from "./WorkstationContainer";
 
 interface properties {

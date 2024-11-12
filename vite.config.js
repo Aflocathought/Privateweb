@@ -10,7 +10,6 @@ const root = resolve(dirname(path));
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/Privateweb/',
   root,
   plugins: [react()],
   server: {

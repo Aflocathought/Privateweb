@@ -111,8 +111,6 @@ export const Todo = () => {
 
   const [_, setAddSubtasksPanel] = useState(false);
 
-
-
   const [typing, setTyping] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingSubtask, setIsEditingSubtask] = useState(false);
@@ -444,6 +442,20 @@ export const Todo = () => {
     }
   };
 
+  const saveTodosToFile = (todos: TodoItem[]) => {
+    const blob = new Blob([JSON.stringify(todos, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "todos.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="Todo">
       {/* 主界面 */}
@@ -468,10 +480,10 @@ export const Todo = () => {
             <Button onClick={undoDelSubtask} style={{ marginLeft: "10px" }}>
               撤销删除子任务
             </Button>
+            <Button onClick={() => saveTodosToFile(todos)}>保存Todo</Button>
           </div>
           <Divider className="mt-2" />
         </div>
-        <div></div>
       </div>
       {/* 主界面 */}
 
