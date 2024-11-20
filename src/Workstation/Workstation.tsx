@@ -111,6 +111,7 @@ export const Workstation = () => {
             display: "block", // 当抽屉展开时显示内容
             height: "100vh", // 占满全屏
             width:"100%",
+            maxWidth: "100%",
             overflowY: "auto", // 内容超出时可以滚动
             pointerEvents: isOpen ? "auto" : "none",
           }}

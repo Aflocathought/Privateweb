@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./App.css";
 
-
 import { Time } from "./Time/Time";
 import { Workstation } from "./Workstation/Workstation";
-import { EverydayPic } from "./EverydayPic/EverydayPic";
+import { EverydayPic } from "./BackgroundPic/BackgroundPic";
+import { SystemMonitor } from "./SystemMonitor/SystemMonitor";
 
 interface AppProps {}
 export const AppRenderer = (props?: AppProps) => {
@@ -53,6 +53,9 @@ export const AppRenderer = (props?: AppProps) => {
               <Time />
             </div>
             {/* 时间 */}
+            <div>
+              <SystemMonitor />
+            </div>
             <EverydayPic setUrl={setImageUrl} onlyViewPhoto={setViewPhoto} />
             {/* <div className="flex flex-col justify-center">
                 <WebsiteFavorite />

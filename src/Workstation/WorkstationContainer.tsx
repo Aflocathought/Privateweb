@@ -1,5 +1,5 @@
 import { Divider } from "@fluentui/react-components";
-// import { WeatherChart } from "../Weather/Weather";
+import { WeatherChart } from "../Weather/Weather";
 import { Classtable } from "../Classtable/Classtable";
 import { Todo } from "../Todo/TodoUpdate copy";
 import { useRef, useState, useEffect } from "react";
@@ -15,7 +15,7 @@ export const WorkstationContainer: React.FC = () => {
   const componentMap: { [key: string]: React.ComponentType } = {
     Classtable: Classtable,
     Todo: Todo,
-    // WeatherChart: WeatherChart,
+    WeatherChart: WeatherChart,
     Divider: () => <Divider vertical />,
   };
 
@@ -58,7 +58,7 @@ export const WorkstationContainer: React.FC = () => {
         flexDirection: "row",
         height: "auto",
         minHeight: "100%",
-        width: "100%",
+        maxWidth: "100%",
       }}
     >
       <div
@@ -70,6 +70,7 @@ export const WorkstationContainer: React.FC = () => {
           boxSizing: "border-box",
           height: "100vh",
           position: "fixed",
+          zIndex: "114519",
         }}
       >
         <ul
@@ -80,7 +81,6 @@ export const WorkstationContainer: React.FC = () => {
             padding: "0",
             fontWeight: "bold",
             width: "50px",
-           
           }}
         >
           {functions.map((func, index) => (
@@ -106,7 +106,10 @@ export const WorkstationContainer: React.FC = () => {
         </ul>
       </div>
       {/* 抽屉内容 */}
-      <div id="ws_container" style={{ display: "flex",marginLeft:"70px" }}>
+      <div
+        id="ws_container"
+        style={{ display: "flex", marginLeft: "70px", maxWidth: "95%" }}
+      >
         {windowList.map((componentName, index) => {
           const Component = componentMap[componentName];
           return Component ? <Component key={index} /> : null;

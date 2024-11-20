@@ -3,14 +3,14 @@ import "../Todo.css";
 import "../../index.css";
 import { Option, Textarea } from "@fluentui/react-components";
 import { Select,  Button } from "antd";
-import { MyCalendar } from "../../Components/Base/MyCalendar";
+import { MyCalendar } from "../../Components/MyCalendar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { calculateBackgroundColor } from "../TodoFunction";
 import { IDropdownOption } from "@fluentui/react";
-import { MyColorPicker } from "../../Components/Base/ColorPicker/MyColorPicker";
+import { MyColorPicker } from "../../Components/ColorPicker/MyColorPicker";
 
 interface CombinedInputProps {
   exportData: (data: TodoItem) => void;

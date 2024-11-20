@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Mouse } from "../Mouse/Mouse";
+import { StyledContainer } from "../Components/StyledContainer/StyledContainer";
 import "../index.css";
 
 interface EverydayPicProps {
@@ -159,25 +160,23 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
       }}
     >
       <div
-        className="flex fixed rounded-2xl items-center justify-center min-w-14 h-14"
-        style={{
-          backgroundColor: "rgba(255,255,255,0.3)",
-          backdropFilter: "blur(2px)",
-        }}
         onClick={() => {
           setOpen(!open);
         }}
       >
-        <FontAwesomeIcon
-          icon={faPhotoFilm}
-          style={{
-            color: "rgba(255,255,255,0.7)",
-            width: "30px",
-            height: "30px",
-          }}
-        />
+        <StyledContainer className="min-w-14 h-14">
+          <FontAwesomeIcon
+            icon={faPhotoFilm}
+            style={{
+              color: "rgba(255,255,255,0.7)",
+              width: "30px",
+              height: "30px",
+            }}
+          />
+        </StyledContainer>
         <Mouse setIsVisible={setIsVisible} />
       </div>
+
       <div
         className="flex relative left-0 top-14 rounded-2xl bg-white flex-col w-auto"
         style={{
