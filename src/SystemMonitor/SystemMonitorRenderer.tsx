@@ -1,5 +1,6 @@
 import "./SystemMonitor.css";
 import { dataStructure } from "./SystemMonitor";
+import { StyledContainer } from "../Components/StyledContainer/StyledContainer";
 
 interface SystemMonitorRendererProps {
   SystemInfo: dataStructure;
@@ -58,7 +59,7 @@ export const SystemMonitorRenderer: React.FC<SystemMonitorRendererProps> = ({
       <p>Memory Usage: {normalizedSystemInfo.memory.percent}%</p>
       <p>Network Sent: {normalizedSystemInfo.network.up}</p>
       <p>Network Received: {normalizedSystemInfo.network.down}</p>
-      <p>Response Time: {normalizedSystemInfo.response_time} ms</p>
+      <p>Response Time: {normalizedSystemInfo.response_time} s</p>
     </div>
   );
 };

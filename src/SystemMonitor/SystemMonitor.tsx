@@ -33,7 +33,6 @@ export const SystemMonitor = () => {
       }
       const result = await response.json();
       setData(result);
-      console.log("Data fetched:", result);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

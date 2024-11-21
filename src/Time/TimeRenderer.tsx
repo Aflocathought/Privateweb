@@ -1,11 +1,27 @@
+import { useEffect, useState } from "react";
 export interface TimeProps {
   time: string;
   day: string;
   dayOfWeek: string;
-  strokeDashoffset: number;
 }
+
 export const TimeRenderer = (props: TimeProps) => {
-  const { time, day, dayOfWeek, strokeDashoffset } = props;
+  const { time, day, dayOfWeek } = props;
+  const [seconds, setSeconds] = useState(new Date().getSeconds());
+  const [milliseconds, setMilliseconds] = useState(
+    new Date().getMilliseconds()
+  );
+  const strokeDashoffset =
+    (60 - seconds - milliseconds / 1000) * 4.71238898038469;
+  /* 因为strokedashoffset更新频繁所以逻辑还是放在这里，避免组件之间的频繁收发 */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(new Date().getSeconds());
+      setMilliseconds(new Date().getMilliseconds());
+    }, 1000 / 60);
+    return () => clearInterval(interval);
+  }, [time, day, dayOfWeek, strokeDashoffset]);
+
   return (
     <>
       {/* 时间 */}

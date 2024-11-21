@@ -4,51 +4,33 @@ import { TimeRenderer } from "./TimeRenderer";
 import { TimeProps } from "./TimeRenderer";
 export const Time = () => {
   const [time, setTime] = useState(new Date().toLocaleTimeString().slice(0, 5));
-  const [day, _] = useState(new Date().toLocaleDateString());
+  const [day, setDay] = useState(new Date().toLocaleDateString());
   const daysOfWeek = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-  const date = new Date();
-  const dayOfWeek = daysOfWeek[date.getDay()];
-  const [seconds, setSeconds] = useState(new Date().getSeconds());
-  const [milliseconds, setMilliseconds] = useState(
-    new Date().getMilliseconds()
-  );
-  const strokeDashoffset =
-    ((60 - seconds - milliseconds / 1000) / 60) * 2 * Math.PI * 45;
+  const [dayOfWeek, setDayOfWeek] = useState(daysOfWeek[new Date().getDay()]);
 
   const [exportTime, setExportTime] = useState<TimeProps>({
     time: time,
     day: day,
     dayOfWeek: dayOfWeek,
-    strokeDashoffset: strokeDashoffset,
   });
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime(new Date().toLocaleTimeString().slice(0, 5));
-    }, 100);
+      const now = new Date();
+      setTime(now.toLocaleTimeString().slice(0, 5));
+      setDay(now.toLocaleDateString());
+      setDayOfWeek(daysOfWeek[now.getDay()]);
+      setExportTime({
+        time: now.toLocaleTimeString().slice(0, 5),
+        day: now.toLocaleDateString(),
+        dayOfWeek: daysOfWeek[now.getDay()],
+      });
+    }, 200);
 
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [time, day, dayOfWeek]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds(new Date().getSeconds());
-      setMilliseconds(new Date().getMilliseconds());
-      setExportTime({
-        time: time,
-        day: day,
-        dayOfWeek: dayOfWeek,
-        strokeDashoffset: strokeDashoffset,
-      });
-    }, 1000 / 60);
-    return () => clearInterval(interval);
-  }, [time, day, dayOfWeek, strokeDashoffset]);
-
-  return (
-    <>
-      <TimeRenderer {...exportTime} />
-    </>
-  );
+  return <TimeRenderer {...exportTime} />;
 };
