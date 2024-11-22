@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { throttle } from "lodash";
 
 interface MouseProps {
   setIsVisible: (isVisible: boolean) => void;
@@ -7,7 +8,7 @@ interface MouseProps {
 export const Mouse: React.FC<MouseProps> = ({ setIsVisible }) => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleMouseMove = () => {
+  const handleMouseMove = throttle(() => {
     // 清除之前的定时器
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -20,7 +21,7 @@ export const Mouse: React.FC<MouseProps> = ({ setIsVisible }) => {
 
     // 显示元素
     setIsVisible(true);
-  };
+  }, 100);
 
   useEffect(() => {
     // 监听鼠标移动事件

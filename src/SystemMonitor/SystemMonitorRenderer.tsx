@@ -1,7 +1,8 @@
 import "./SystemMonitor.css";
 import { dataStructure } from "./SystemMonitor";
 import { StyledContainer } from "../Components/StyledContainer/StyledContainer";
-
+import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 interface SystemMonitorRendererProps {
   SystemInfo: dataStructure;
 }
@@ -53,13 +54,21 @@ export const SystemMonitorRenderer: React.FC<SystemMonitorRendererProps> = ({
   const normalizedSystemInfo = normalizeData(SystemInfo);
 
   return (
-    <div>
-      <h2>System Monitor</h2>
-      <p>CPU Usage: {normalizedSystemInfo.cpu}%</p>
-      <p>Memory Usage: {normalizedSystemInfo.memory.percent}%</p>
-      <p>Network Sent: {normalizedSystemInfo.network.up}</p>
-      <p>Network Received: {normalizedSystemInfo.network.down}</p>
-      <p>Response Time: {normalizedSystemInfo.response_time} s</p>
-    </div>
+    <StyledContainer style={{minWidth:"200px"}}>
+      <div style={{minWidth:"80px"}}>
+        <p>CPU {normalizedSystemInfo.cpu}%</p>
+        <p>内存 {normalizedSystemInfo.memory.percent}%</p>
+      </div>
+      <div className="ml-2">
+        <div className="flex items-center">
+          <FontAwesomeIcon icon={faArrowUp} />
+          <p className="ml-2">{normalizedSystemInfo.network.up}</p>
+        </div>
+        <div className="flex items-center">
+          <FontAwesomeIcon icon={faArrowDown} />
+          <p className="ml-2">{normalizedSystemInfo.network.down}</p>
+        </div>
+      </div>
+    </StyledContainer>
   );
 };

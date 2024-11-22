@@ -5,6 +5,7 @@ import { Time } from "./Time/Time";
 import { Workstation } from "./Workstation/Workstation";
 import { EverydayPic } from "./BackgroundPic/BackgroundPic";
 import { SystemMonitor } from "./SystemMonitor/SystemMonitor";
+import { Panel } from "./Panel/Panel";
 
 interface AppProps {}
 export const AppRenderer = (props?: AppProps) => {
@@ -38,11 +39,11 @@ export const AppRenderer = (props?: AppProps) => {
             >
               <Workstation />
             </div>
-            {/* 时间 */}
+
             <div
               style={{
-                position: "relative",
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 width: "100%",
@@ -51,10 +52,7 @@ export const AppRenderer = (props?: AppProps) => {
               }}
             >
               <Time />
-            </div>
-            {/* 时间 */}
-            <div>
-              <SystemMonitor />
+              <Panel />
             </div>
             <EverydayPic setUrl={setImageUrl} onlyViewPhoto={setViewPhoto} />
             {/* <div className="flex flex-col justify-center">

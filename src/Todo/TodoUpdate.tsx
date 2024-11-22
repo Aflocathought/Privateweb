@@ -7,7 +7,7 @@ import { Button, Checkbox } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { MyCalendar } from "../Components/MyCalendar";
-import { Icon } from "./Components/Icon";
+import { Icon } from "./Components/SelectableIcon";
 import { CombinedInput } from "./Components/CombinedInput";
 
 import { MyColorPicker } from "../Components/ColorPicker/MyColorPicker";

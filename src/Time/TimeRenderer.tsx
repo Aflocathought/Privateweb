@@ -23,30 +23,49 @@ export const TimeRenderer = (props: TimeProps) => {
   }, [time, day, dayOfWeek, strokeDashoffset]);
 
   return (
-    <>
+    <div
+    style={{
+      position: 'relative',
+      width: '500px',
+      height: '500px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
       {/* 时间 */}
       <div
         style={{
-          position: "absolute",
-          zIndex: 1,
-          fontSize: "220px",
-          textShadow: "0 0 10px rgba(0,0,0,0.5)",
-          color: "white",
-          userSelect: "none",
+          marginTop: "-35px",
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        {time}
-      </div>
-      <div
-        style={{
-          fontSize: "45px",
-          marginTop: "300px",
-          textShadow: "0 0 10px rgba(0,0,0,0.5)",
-          color: "white",
-          userSelect: "none",
-        }}
-      >
-        {day} {dayOfWeek}
+        <div
+          style={{
+            position: "absolute",
+            zIndex: 1,
+            fontSize: "220px",
+            textShadow: "0 0 10px rgba(0,0,0,0.5)",
+            color: "white",
+            userSelect: "none",
+          }}
+        >
+          {time}
+        </div>
+        <div
+          style={{
+            fontSize: "45px",
+            marginTop: "300px",
+            textShadow: "0 0 10px rgba(0,0,0,0.5)",
+            color: "white",
+            userSelect: "none",
+          }}
+        >
+          {day} {dayOfWeek}
+        </div>
       </div>
       <svg
         style={{
@@ -72,6 +91,6 @@ export const TimeRenderer = (props: TimeProps) => {
         />
       </svg>
       {/* 时间 */}
-    </>
+    </div>
   );
 };

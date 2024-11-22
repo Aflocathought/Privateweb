@@ -30,6 +30,7 @@
     "fastify-cli": "^7.0.1",
     "highlight.js": "^11.10.0",
     "katex": "^0.16.11",
+    "lodash": "^4.17.21",
     "marked": "^15.0.0",
     "number-to-chinese-words": "^1.0.20",
     "react": "^18.3.1",
@@ -42,6 +43,7 @@
     "styled-components": "^6.1.13"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.13",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",

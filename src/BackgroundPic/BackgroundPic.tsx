@@ -164,7 +164,7 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
           setOpen(!open);
         }}
       >
-        <StyledContainer className="min-w-14 h-14">
+        <StyledContainer className="min-w-14 h-14 items-center justify-center">
           <FontAwesomeIcon
             icon={faPhotoFilm}
             style={{
