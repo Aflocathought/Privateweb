@@ -1,5 +1,3 @@
-// 目前应该仅作为收发数据使用
+import { createContext } from "react";
 
-export const Appcontext = () => {
-  return <></>;
-};
+export const PerformanceContext = createContext({});

@@ -6,6 +6,7 @@ import { Workstation } from "./Workstation/Workstation";
 import { EverydayPic } from "./BackgroundPic/BackgroundPic";
 import { SystemMonitor } from "./SystemMonitor/SystemMonitor";
 import { Panel } from "./Panel/Panel";
+import { Setting } from "./Setting/Setting";
 
 interface AppProps {}
 export const AppRenderer = (props?: AppProps) => {
@@ -54,7 +55,10 @@ export const AppRenderer = (props?: AppProps) => {
               <Time />
               <Panel />
             </div>
-            <EverydayPic setUrl={setImageUrl} onlyViewPhoto={setViewPhoto} />
+            <div className="flex fixed m-4">
+              <EverydayPic setUrl={setImageUrl} onlyViewPhoto={setViewPhoto} />
+              <Setting />
+            </div>
             {/* <div className="flex flex-col justify-center">
                 <WebsiteFavorite />
               </div> */}

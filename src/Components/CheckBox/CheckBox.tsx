@@ -1,14 +1,20 @@
-import "./checkbox.css"
+import "./checkbox.css";
 
-interface CheckboxProps {
+interface CheckBoxProps {
+  className?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
 }
-export const Checkbox = (props: CheckboxProps) => {
+
+export const CheckBox: React.FC<CheckBoxProps> = ({
+  className,
+  checked,
+  onChange,
+}) => {
   const onCheck = () => {
-    props.onChange(!props.checked);
-  }
-  return <div className="checkbox_container">
-    
+    onChange(!checked);
+  };
+  return <div className={`checkbox_container ${className}`} style={}>
+
   </div>;
 };

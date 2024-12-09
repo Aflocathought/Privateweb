@@ -1,5 +1,4 @@
 import "./App.css";
-import { Appcontext } from "./AppContext/AppContext";
 import { AppRenderer } from "./AppRenderer";
 
 declare global {

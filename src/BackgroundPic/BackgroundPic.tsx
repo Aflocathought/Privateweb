@@ -49,7 +49,6 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
 
   const [source, setSource] = useState<string>("");
   // 第一个 useEffect：组件挂载时从 localStorage 加载数据
-  // 第一个 useEffect：组件挂载时从 localStorage 加载数据
   useEffect(() => {
     const storedProperties = localStorage.getItem("properties");
     if (storedProperties) {
@@ -152,7 +151,6 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
   // #endregion
   return (
     <div
-      className="flex fixed m-4"
       style={{
         opacity: !open && !isVisible ? 0 : 1,
         transition: "opacity 0.3s ease-in-out",
@@ -178,7 +176,7 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
       </div>
 
       <div
-        className="flex relative left-0 top-14 rounded-2xl bg-white flex-col w-auto"
+        className="flex relative -left-14 top-14 rounded-2xl bg-white flex-col w-auto"
         style={{
           backgroundColor: "rgba(255,255,255,0.3)",
           opacity: open ? 1 : 0,
