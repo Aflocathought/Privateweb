@@ -13,6 +13,7 @@ import {
   red,
 } from "@ant-design/colors";
 import { ColorPickerProps, theme } from "antd";
+
 interface MyColorPickerProps {
   color: string;
   onSelect: (color: string) => void;
@@ -25,16 +26,19 @@ export const MyColorPicker: React.FC<MyColorPickerProps> = ({
   onSelect,
 }) => {
   const [colorInput, setColorInput] = useState<string>(color);
+
   const onColorInput = (color: string) => {
     setColorInput(color);
-    onSelect(colorInput); 
+    onSelect(color); // 使用传递的新颜色值
   };
+
   const genPresets = (presets = presetPalettes) =>
     Object.entries(presets).map<Presets>(([label, colors]) => ({
       label,
       colors,
       defaultOpen: false,
     }));
+
   const { token } = theme.useToken();
   const colorpreset = genPresets({
     red,
@@ -47,6 +51,7 @@ export const MyColorPicker: React.FC<MyColorPickerProps> = ({
     primary: generate(token.colorPrimary),
     purple,
   });
+
   return (
     <ColorPicker
       className="ml-2"

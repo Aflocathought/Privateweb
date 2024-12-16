@@ -54,8 +54,8 @@ export const SystemMonitorRenderer: React.FC<SystemMonitorRendererProps> = ({
   const normalizedSystemInfo = normalizeData(SystemInfo);
 
   return (
-    <StyledContainer style={{minWidth:"200px"}}>
-      <div style={{minWidth:"80px"}}>
+    <StyledContainer style={{ minWidth: "200px" }}>
+      <div style={{ minWidth: "80px" }}>
         <p>CPU {normalizedSystemInfo.cpu}%</p>
         <p>内存 {normalizedSystemInfo.memory.percent}%</p>
       </div>

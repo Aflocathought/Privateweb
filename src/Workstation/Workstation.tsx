@@ -1,4 +1,4 @@
-import { useEffect, useState  } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import { Mouse } from "../Mouse/Mouse";
 import { WorkstationContainer } from "./WorkstationContainer";
@@ -24,27 +24,22 @@ export const Workstation = () => {
     setIsOpen(!isOpen);
   };
 
-
+  useEffect(() => {}, [isOpen]);
   return (
     <div
+      className="flex flex-col fixed bottom-0 left-0"
       style={{
-        display: "flex",
-        flexDirection: "column",
-        bottom: 0,
-        left: 0,
         marginLeft: "1%",
         width: "98%",
         marginBottom: "-1%",
         borderRadius: "15px",
-        position: "fixed",
         zIndex: isOpen ? 10 : 5,
       }}
     >
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div
-          className="fixed"
+          className="fixed w-auto"
           style={{
-            width: "auto",
             height: hover1 ? "100px" : "75px",
             borderRadius: "15px",
             textAlign: "center",
@@ -80,11 +75,9 @@ export const Workstation = () => {
         }}
       >
         <div
-          className="absolute"
+          className="absolute left-0 right-0 bottom-2.5"
           style={{
-            bottom: 10, // 定位到顶部
-            left: 0, // 定位到左侧
-            right: 0, // 右侧设置为0，与左侧配合，实现宽度100%
+            // 定位到顶部 定位到左侧 右侧设置为0，与左侧配合，实现宽度100%
             height: "50px", // 高度可以根据需要调整
             background:
               "linear-gradient(rgba(255,255,255,0), rgba(150,150,150,0.5))", // 渐变灰色背景
@@ -94,7 +87,7 @@ export const Workstation = () => {
             opacity: hover ? 1 : 0, // 默认完全透明
             display: isOpen ? "flex" : "none", // 当抽屉展开时显示内容
             transition: "opacity 0.5s ease", // 平滑过渡效果
-            zIndex: 1145141, // 置于最上层
+            zIndex: isOpen ? 1145141 : 0, // 置于最上层
           }}
           onMouseEnter={() => {
             setHover(true);
@@ -108,9 +101,9 @@ export const Workstation = () => {
         </div>
         <div
           style={{
-            display: "block", // 当抽屉展开时显示内容
+            display: "block",
             height: "100vh", // 占满全屏
-            width:"100%",
+            width: "100%",
             maxWidth: "100%",
             overflowY: "auto", // 内容超出时可以滚动
             pointerEvents: isOpen ? "auto" : "none",
@@ -123,4 +116,3 @@ export const Workstation = () => {
     </div>
   );
 };
-

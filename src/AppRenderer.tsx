@@ -4,7 +4,6 @@ import "./App.css";
 import { Time } from "./Time/Time";
 import { Workstation } from "./Workstation/Workstation";
 import { EverydayPic } from "./BackgroundPic/BackgroundPic";
-import { SystemMonitor } from "./SystemMonitor/SystemMonitor";
 import { Panel } from "./Panel/Panel";
 import { Setting } from "./Setting/Setting";
 
@@ -33,7 +32,6 @@ export const AppRenderer = (props?: AppProps) => {
           >
             <div
               style={{
-                display: "flex",
                 justifyContent: "center",
                 opacity: viewPhoto ? 0 : 1,
               }}
@@ -55,9 +53,9 @@ export const AppRenderer = (props?: AppProps) => {
               <Time />
               <Panel />
             </div>
-            <div className="flex fixed m-4">
+            <div className="flex fixed m-4 justify-between z-6">
               <EverydayPic setUrl={setImageUrl} onlyViewPhoto={setViewPhoto} />
-              <Setting />
+              {/* <Setting /> */}
             </div>
             {/* <div className="flex flex-col justify-center">
                 <WebsiteFavorite />

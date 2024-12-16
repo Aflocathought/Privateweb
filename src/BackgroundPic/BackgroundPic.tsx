@@ -155,6 +155,8 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
         opacity: !open && !isVisible ? 0 : 1,
         transition: "opacity 0.3s ease-in-out",
         zIndex: 6,
+        width: "56px",
+        height: "56px",
       }}
     >
       <div

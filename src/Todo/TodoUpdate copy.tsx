@@ -132,10 +132,8 @@ export const Todo = () => {
    * @param color
    */
   const changeColor = (index: number, color: any) => {
-    todos[index].color = color.toHexString();
-    todos[index].backgroundColor = calculateBackgroundColor(
-      color.toHexString()
-    );
+    todos[index].color = color;
+    todos[index].backgroundColor = calculateBackgroundColor(color);
     todoRefreshTime(index);
     localStorage.setItem("todos", JSON.stringify(todos));
   };
@@ -478,7 +476,12 @@ export const Todo = () => {
             <Button onClick={undoDelSubtask} style={{ marginLeft: "10px" }}>
               撤销删除子任务
             </Button>
-            <Button onClick={() => saveTodosToFile(todos)} style={{ marginLeft: "10px" }}>保存Todo</Button>
+            <Button
+              onClick={() => saveTodosToFile(todos)}
+              style={{ marginLeft: "10px" }}
+            >
+              保存Todo
+            </Button>
           </div>
           <Divider className="mt-2" />
         </div>
@@ -812,13 +815,10 @@ export const Todo = () => {
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </Button>
-
-                      {/* 暂时不能用不知道为啥注意一下↓ */}
                       <MyColorPicker
                         color={todos[index].color}
                         onSelect={(color) => changeColor(index, color)}
                       />
-                      {/* 暂时不能用不知道为啥注意一下↑ */}
                     </div>
                     <p
                       className="fadeIn mt-1"
