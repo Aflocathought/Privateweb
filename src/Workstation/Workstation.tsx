@@ -4,9 +4,10 @@ import { Mouse } from "../Mouse/Mouse";
 import { WorkstationContainer } from "./WorkstationContainer";
 
 interface properties {
-  selectPage: string;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
-export const Workstation = () => {
+export const Workstation: React.FC<properties> = ({ isOpen, setIsOpen }) => {
   const [_, setProperties] = useState<properties[]>([]); // 保存workstation的状态
   useEffect(() => {
     const storedProperties = localStorage.getItem("properties");
@@ -14,13 +15,10 @@ export const Workstation = () => {
       setProperties(JSON.parse(storedProperties));
     }
   }, []);
-  // 抽屉是否展开的状态
-  const [isOpen, setIsOpen] = useState(false);
   const [hover, setHover] = useState(false);
 
   const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {}, [isOpen]);
   return (
     <div
       className="flex flex-col fixed bottom-0 left-0"
@@ -30,9 +28,9 @@ export const Workstation = () => {
         marginBottom: "-1%",
         borderRadius: "15px",
         zIndex: isOpen ? 10 : 5,
+        pointerEvents: isOpen ? "auto" : "none",
       }}
     >
-    
       <div
         className=""
         style={{
@@ -65,7 +63,7 @@ export const Workstation = () => {
           onMouseLeave={() => {
             setHover(false);
           }}
-          onClick={toggleDrawer}
+          onClick={() => setIsOpen(false)}
         >
           点击收起
         </div>
@@ -76,7 +74,6 @@ export const Workstation = () => {
             width: "100%",
             maxWidth: "100%",
             overflowY: "auto", // 内容超出时可以滚动
-            pointerEvents: isOpen ? "auto" : "none",
           }}
         >
           <WorkstationContainer />

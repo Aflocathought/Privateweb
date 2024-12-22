@@ -6,11 +6,13 @@ import { Workstation } from "./Workstation/Workstation";
 import { EverydayPic } from "./BackgroundPic/BackgroundPic";
 import { Panel } from "./Panel/Panel";
 import { Setting } from "./Setting/Setting";
+import { WorkstationLabel } from "./Workstation/Components/WorkstationLabel";
 
 interface AppProps {}
 export const AppRenderer = (props?: AppProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [viewPhoto, setViewPhoto] = useState<boolean>(false);
+  const [isOpenWorkstation, setIsOpenWorkstation] = useState<boolean>(false);
 
   return (
     <>
@@ -25,12 +27,19 @@ export const AppRenderer = (props?: AppProps) => {
             }}
           >
             <div
-              style={{
-                justifyContent: "center",
-                opacity: viewPhoto ? 0 : 1,
-              }}
+              className={`absolute w-[100%] flex justify-center opacity-${
+                viewPhoto ? 0 : 100
+              }`}
             >
-              <Workstation />
+              <Workstation
+                isOpen={isOpenWorkstation}
+                setIsOpen={setIsOpenWorkstation}
+              />
+              <WorkstationLabel
+                id="workstationLabel"
+                isOpen={isOpenWorkstation}
+                setIsOpen={setIsOpenWorkstation}
+              />
             </div>
 
             <div

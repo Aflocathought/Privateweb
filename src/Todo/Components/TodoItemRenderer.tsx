@@ -154,8 +154,8 @@ export const TodoItemRenderer: React.FC<TodoItemRendererProps> = ({ todo }) => {
             {/*子任务呈现*/}
             <ul>
               <div
-                style={{ display: "flex", flexDirection: "column" }}
-                className={`subtaskcollapse ${
+            
+                className={`flex flex-col subtaskcollapse ${
                   todo.subtaskscollapsed ? "collapsed" : ""
                 }`}
                 onMouseLeave={(e) => {

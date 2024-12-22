@@ -59,7 +59,7 @@ export const WorkstationContainer: React.FC = () => {
           boxSizing: "border-box",
         }}
       >
-        <ul
+        <div
           style={{
             display: "flex",
             flexDirection: "column",
@@ -89,7 +89,7 @@ export const WorkstationContainer: React.FC = () => {
               />
             </div>
           ))}
-        </ul>
+        </div>
       </div>
       {/* 抽屉内容 */}
       <div id="ws_container" className="flex ml-[70px] max-w-[95%] ">
