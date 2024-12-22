@@ -1,8 +1,8 @@
-import { TodoItem } from "../TodoUpdate copy";
+import { TodoStructure } from "../Todo";
 import "../Todo.css";
 import "../../index.css";
 import { Option, Textarea } from "@fluentui/react-components";
-import { Select,  Button } from "antd";
+import { Select, Button } from "antd";
 import { MyCalendar } from "../../Components/MyCalendar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -13,7 +13,7 @@ import { IDropdownOption } from "@fluentui/react";
 import { MyColorPicker } from "../../Components/ColorPicker/MyColorPicker";
 
 interface CombinedInputProps {
-  exportData: (data: TodoItem) => void;
+  exportData: (data: TodoStructure) => void;
 }
 
 export const CombinedInput: React.FC<CombinedInputProps> = ({ exportData }) => {
@@ -23,11 +23,12 @@ export const CombinedInput: React.FC<CombinedInputProps> = ({ exportData }) => {
   const [dateTime, setDateTime] = useState<Date | number>(0);
   const [showPicker, setShowPicker] = useState(false);
   const [typing, setTyping] = useState(false);
+
   const packingData = (e: React.FormEvent) => {
     e.preventDefault();
     if (input) {
       const now = Date.now();
-      const newTodo: TodoItem = {
+      const newTodo: TodoStructure = {
         ID: now,
         text: input,
         timestamp: now,
@@ -45,6 +46,10 @@ export const CombinedInput: React.FC<CombinedInputProps> = ({ exportData }) => {
         updatetime: Date.now(),
       };
       exportData(newTodo);
+      setInput("");
+      setColorInput("#000000");
+      setSelectedIcon("");
+      setDateTime(0);
     }
   };
 
@@ -112,11 +117,12 @@ export const CombinedInput: React.FC<CombinedInputProps> = ({ exportData }) => {
                 </>
               )}
             </div>
-            
+
             <MyColorPicker
               color={colorInput}
               onSelect={(color) => setColorInput(color)}
             />
+
             <div style={{ display: "flex", alignItems: "center" }}>
               <Select
                 showSearch={true}

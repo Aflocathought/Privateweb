@@ -18,16 +18,10 @@ export const AppRenderer = (props?: AppProps) => {
         {/* 页面一 */}
         <div id="section1" className="section">
           <div
+            className="flex min-h-[100vh] h-[auto] max-h-[100vh] w-[auto] min-w-[100vw] relative"
             style={{
-              display: "flex",
               backgroundImage: `url(${imageUrl})`,
               backgroundSize: "cover",
-              minHeight: "100vh",
-              maxHeight: "100vh",
-              height: "auto",
-              minWidth: "100vw",
-              width: "auto",
-              position: "relative",
             }}
           >
             <div
@@ -40,20 +34,17 @@ export const AppRenderer = (props?: AppProps) => {
             </div>
 
             <div
+              className={`flex flex-col justify-center items-center w-[100%] opacity-${
+                viewPhoto ? 0 : 100
+              }`}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                opacity: viewPhoto ? 0 : 1,
                 transition: "opacity 0.3s ease-in-out",
               }}
             >
               <Time />
               <Panel />
             </div>
-            <div className="flex fixed m-4 justify-between z-6">
+            <div className="flex fixed m-4 justify-between">
               <EverydayPic setUrl={setImageUrl} onlyViewPhoto={setViewPhoto} />
               {/* <Setting /> */}
             </div>

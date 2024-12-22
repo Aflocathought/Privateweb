@@ -1,5 +1,3 @@
-/* todo中的 */
-
 .subtaskcollapse {
   transition: max-height 0.5s ease-in-out;
   max-height: 2000px;
@@ -12,29 +10,18 @@
 }
 
 .Todo {
-  display: flex;
-  flex-direction: row;
   background-color: rgba(255, 255, 255, 1);
-  padding: 15px;
   border-radius: 15px;
   font-family: Arial;
 
-  /* 对于 Chrome、Edge 和 Safari */
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  scrollbar-width: none; /* 对于 Firefox */
-  -ms-overflow-style: none; /* 对于 IE 和 Edge */
-  overflow-y: auto; /* 保持滚动功能 */
-  /* filter: blur(5px); */
-
   .TodoMain {
-    overflow-x: auto;
+    overflow-x: scroll;
     display: flex;
+    flex-direction: row;
 
     .todo {
       left: 2%;
-      min-width: 350px;
+      width: 350px;
       height: auto;
       margin-right: 10px;
       padding: 15px;

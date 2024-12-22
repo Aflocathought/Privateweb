@@ -17,12 +17,8 @@ export const Workstation = () => {
   // 抽屉是否展开的状态
   const [isOpen, setIsOpen] = useState(false);
   const [hover, setHover] = useState(false);
-  const [hover1, setHover1] = useState(false);
+
   const [isVisible, setIsVisible] = useState(true);
-  // 控制抽屉展开或收起的函数
-  const toggleDrawer = () => {
-    setIsOpen(!isOpen);
-  };
 
   useEffect(() => {}, [isOpen]);
   return (
@@ -36,34 +32,7 @@ export const Workstation = () => {
         zIndex: isOpen ? 10 : 5,
       }}
     >
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div
-          className="fixed w-auto"
-          style={{
-            height: hover1 ? "100px" : "75px",
-            borderRadius: "15px",
-            textAlign: "center",
-            bottom: -35,
-            cursor: "pointer",
-            padding: "10px 0",
-            backgroundColor: "rgba(255, 255, 255,0.5)",
-            opacity: isOpen || !isVisible ? 0 : 1, // 抽屉展开时隐藏
-            transition: "opacity 0.3s ease-in-out,height 0.3s ease-in-out", // 平滑过渡效果
-            backdropFilter: "blur(2px)",
-          }}
-          onClick={toggleDrawer}
-          onMouseEnter={() => {
-            setHover1(true);
-          }}
-          onMouseLeave={() => {
-            setHover1(false);
-          }}
-        >
-          <p className="ml-2 mr-2 mt-0.5" style={{ color: "rgba(99,99,99,1)" }}>
-            {"点击展开工作区域"}
-          </p>
-        </div>
-      </div>
+    
       <div
         className=""
         style={{
@@ -72,6 +41,7 @@ export const Workstation = () => {
           borderTop: "1px solid #ccc",
           transform: isOpen ? "translateY(0%)" : "translateY(100%)", // 初始状态显示为底部的一个条
           transition: "transform 0.3s ease-in-out",
+          pointerEvents: isOpen ? "auto" : "none",
         }}
       >
         <div

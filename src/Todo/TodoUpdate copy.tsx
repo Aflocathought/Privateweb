@@ -27,7 +27,7 @@ import {
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
 
-interface SubTasks {
+export interface SubTasks {
   text: string;
   completed: boolean;
   origin: number;
@@ -439,6 +439,7 @@ export const Todo = () => {
       }
     }
   };
+
   const saveTodosToFile = (todos: TodoItem[]) => {
     const blob = new Blob([JSON.stringify(todos, null, 2)], {
       type: "application/json",
@@ -457,12 +458,9 @@ export const Todo = () => {
     <div className="Todo">
       {/* 主界面 */}
       <div
+        className="z-100 w-100 mr-2.5 top-0"
         style={{
-          top: 0,
           backgroundColor: "white",
-          width: "400px",
-          zIndex: 100,
-          marginRight: "10px",
         }}
       >
         <div className="mt-4 flex-col">
@@ -490,7 +488,7 @@ export const Todo = () => {
       {/* 主界面 */}
 
       {/* 待办事项列表 */}
-      <ul className="TodoMain" style={{ marginLeft: "10px", display: "flex" }}>
+      <ul className="TodoMain ml-2.5 flex">
         {todos.map((todo, index) => (
           <div
             className="todo"
@@ -505,47 +503,30 @@ export const Todo = () => {
           >
             <li key={index}>
               <div
-                className="flex flex-col"
+                className="flex flex-col text-[20px] w-[100%]"
                 style={{
                   color: todo.completed ? "gray" : todo.color,
-                  width: "100%",
-                  fontSize: "20px",
                 }}
               >
                 <div
-                  className="flex justify-between"
+                  className="flex justify-between text-[20px] w-[100%]"
                   style={{
-                    width: "100%",
                     color: todo.completed ? "gray" : todo.color,
-                    fontSize: "20px",
                   }}
                 >
-                  <div
-                    className="flex flex-col"
-                    style={{
-                      width: "100%",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                    }}
-                  >
+                  <div className="flex flex-col text-[25px] font-bold w-[100%]">
                     {/* 标题行 */}
-                    <div
-                      className="flex items-center justify-between"
-                      style={{ width: "100%" }}
-                    >
+                    <div className="flex items-center justify-between w-[100%]">
                       <div className="flex items-center">
                         <FontAwesomeIcon
                           icon={faAngleDown}
-                          className={`mr-2 rotate-icon ${
+                          className={`mr-2 rotate-icon text-[30px] ${
                             todos[index].subtaskscollapsed ? "collapsed" : ""
                           }`}
-                          style={{
-                            fontSize: "30px",
-                          }}
                           onClick={() => {
                             collapseSubtask(index);
                           }}
-                        ></FontAwesomeIcon>
+                        />
                         {hoverIndex === index && isEditing ? (
                           <input
                             className="inputInSubtasks"
@@ -566,21 +547,15 @@ export const Todo = () => {
                           </span>
                         )}
                         <div
+                          className="p-1.75 ml-2.5"
                           style={{
-                            marginLeft: "10px",
                             borderRadius: "30%",
                             backgroundColor: todo.completed
                               ? "rgba(211,211,211,0.5)"
                               : calculateBackgroundColor2(todos[index].color),
                           }}
                         >
-                          <span
-                            style={{
-                              margin: "7px",
-                              fontWeight: "normal",
-                              fontSize: "18px",
-                            }}
-                          >
+                          <span className="text-[18px] font-normal">
                             {UncompleteSubtaskNumber(index)}
                           </span>
                         </div>
@@ -610,84 +585,76 @@ export const Todo = () => {
                         }}
                       >
                         {(todo.subtasks || []).map((subtask, subindex) => (
-                          <>
-                            <div
-                              key={subindex}
-                              className="todoSubtasks"
-                              onMouseEnter={() => {
-                                setHoverIndexinSubtask(subindex);
-                              }}
-                            >
-                              <div className="flex content-center items-center">
-                                <Checkbox
-                                  key={subindex}
-                                  checked={
-                                    todos[index].subtasks[subindex].completed
-                                  }
-                                  onChange={(e) => {
-                                    completeSubtask(
-                                      index,
-                                      subindex,
-                                      e.target.checked
-                                    );
-                                  }}
-                                  style={{
-                                    color: todos[index].color,
-                                  }}
-                                />
+                          <div
+                            key={subindex}
+                            className="todoSubtasks"
+                            onMouseEnter={() => {
+                              setHoverIndexinSubtask(subindex);
+                            }}
+                          >
+                            <div className="flex content-center items-center">
+                              <Checkbox
+                                key={subindex}
+                                checked={
+                                  todos[index].subtasks[subindex].completed
+                                }
+                                onChange={(e) => {
+                                  completeSubtask(
+                                    index,
+                                    subindex,
+                                    e.target.checked
+                                  );
+                                }}
+                                style={{
+                                  color: todos[index].color,
+                                }}
+                              />
 
-                                <div className="flex flex-col">
-                                  {hoverIndex === index &&
-                                  hoverIndexinSubtask === subindex &&
-                                  isEditingSubtask ? (
-                                    <textarea
-                                      className="ccontentinstask"
-                                      value={
-                                        todos[index].subtasks[subindex].text
-                                      }
-                                      onChange={(e) =>
-                                        subtaskChange(e, index, subindex)
-                                      }
-                                      onBlur={() => {
-                                        setIsEditingSubtask(false);
-                                      }}
-                                      autoFocus
-                                    />
-                                  ) : (
-                                    <div
-                                      style={{
-                                        fontSize: "15px",
-                                        marginLeft: "10px",
-                                        textDecoration: subtask.completed
-                                          ? "line-through"
-                                          : "none",
+                              <div className="flex flex-col">
+                                {hoverIndex === index &&
+                                hoverIndexinSubtask === subindex &&
+                                isEditingSubtask ? (
+                                  <textarea
+                                    className="ccontentinstask"
+                                    value={todos[index].subtasks[subindex].text}
+                                    onChange={(e) =>
+                                      subtaskChange(e, index, subindex)
+                                    }
+                                    onBlur={() => {
+                                      setIsEditingSubtask(false);
+                                    }}
+                                    autoFocus
+                                  />
+                                ) : (
+                                  <div
+                                    className={`text-[15px] ml-2.5 ${
+                                      subtask.completed ? "line-through" : ""
+                                    }`}
+                                  >
+                                    <span
+                                      onDoubleClick={() => {
+                                        setIsEditingSubtask(true);
                                       }}
                                     >
-                                      <span
-                                        onDoubleClick={() => {
-                                          setIsEditingSubtask(true);
-                                        }}
-                                      >
-                                        {subtask.text}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
+                                      {subtask.text}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
-                              {hoverIndex === index && (
-                                <FontAwesomeIcon
-                                  icon={faTrash}
-                                  style={{ marginLeft: "10px" }}
-                                  onClick={() =>
-                                    delSubtask(
-                                      index,
-                                      todos[index].subtasks[subindex].index
-                                    )
-                                  }
-                                />
-                              )}
                             </div>
-                          </>
+                            {hoverIndex === index && (
+                              <FontAwesomeIcon
+                                icon={faTrash}
+                                style={{ marginLeft: "10px" }}
+                                onClick={() =>
+                                  delSubtask(
+                                    index,
+                                    todos[index].subtasks[subindex].index
+                                  )
+                                }
+                              />
+                            )}
+                          </div>
                         ))}
                       </div>
                     </ul>
@@ -700,10 +667,7 @@ export const Todo = () => {
                             addSubtaskforButton(index);
                           }}
                         >
-                          <div
-                            className="items-center"
-                            style={{ display: "flex" }}
-                          >
+                          <div className="items-center flex">
                             <FontAwesomeIcon icon={faPlus} className="mr-1" />
                             <p>添加子任务</p>
                           </div>
@@ -788,24 +752,22 @@ export const Todo = () => {
             {/*其他隐藏起来的元素*/}
             <div className="flex content-center">
               {hoverIndex === index && (
-                <div className="flex justify-between">
+                <div
+                  className="flex justify-between"
+                  style={{
+                    color: todo.completed ? "gray" : todo.color,
+                  }}
+                >
                   <div className="flex flex-col">
-                    <div
-                      className="flex"
-                      style={{
-                        color: todo.completed ? "gray" : todo.color,
-                      }}
-                    >
+                    <div className="flex">
                       <Button
                         className="fadeIn"
                         style={getTodoColorStyle(todo.ID)}
                         onClick={() => completeTodo(index)}
                       >
-                        {todo.completed ? (
-                          <FontAwesomeIcon icon={faHistory} />
-                        ) : (
-                          <FontAwesomeIcon icon={faCheck} />
-                        )}
+                        <FontAwesomeIcon
+                          icon={todo.completed ? faHistory : faCheck}
+                        />
                       </Button>
 
                       <Button
@@ -820,13 +782,7 @@ export const Todo = () => {
                         onSelect={(color) => changeColor(index, color)}
                       />
                     </div>
-                    <p
-                      className="fadeIn mt-1"
-                      style={{
-                        fontSize: "10px",
-                        color: todo.completed ? "gray" : todo.color,
-                      }}
-                    >
+                    <p className="fadeIn mt-1 text-[10px]">
                       这条Todo添加于{new Date(todo.timestamp).toLocaleString()}
                       {/* <br />
                       最后更新于{new Date(todo.updatetime).toLocaleString()} */}
@@ -850,7 +806,7 @@ export const Todo = () => {
                         <FontAwesomeIcon icon={faArrowUp} />
                       </Button>
                       <Button
-                        className="fadeIn ml-3 mt-2"
+                        className="fadeIn ml-3 mt-2 "
                         style={getTodoColorStyle(todo.ID)}
                         onClick={() => moveUpOrDown(index, 1)}
                       >

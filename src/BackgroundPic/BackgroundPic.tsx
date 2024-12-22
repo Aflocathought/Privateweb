@@ -155,8 +155,6 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
         opacity: !open && !isVisible ? 0 : 1,
         transition: "opacity 0.3s ease-in-out",
         zIndex: 6,
-        width: "56px",
-        height: "56px",
       }}
     >
       <div
@@ -164,7 +162,7 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
           setOpen(!open);
         }}
       >
-        <StyledContainer className="min-w-14 h-14 items-center justify-center">
+        <StyledContainer className="w-14 h-14 items-center justify-center">
           <FontAwesomeIcon
             icon={faPhotoFilm}
             style={{
@@ -178,7 +176,7 @@ export const EverydayPic: React.FC<EverydayPicProps> = ({
       </div>
 
       <div
-        className="flex relative -left-14 top-14 rounded-2xl bg-white flex-col w-auto"
+        className="flex relative rounded-2xl bg-white flex-col w-auto"
         style={{
           backgroundColor: "rgba(255,255,255,0.3)",
           opacity: open ? 1 : 0,

@@ -31,9 +31,9 @@ export const Setting = () => {
       </div>
 
       <div
-        className="flex relative -left-14 top-14 rounded-2xl bg-white flex-col w-auto"
+        className={`flex relative -left-14 top-14 rounded-2xl bg-[rgba(255,255,255,0.3)] flex-col w-auto
+          opacity-${open ? "100" : "0"}`}
         style={{
-          backgroundColor: "rgba(255,255,255,0.3)",
           opacity: open ? 1 : 0,
           transition: "opacity 0.2s ease-in-out",
           backdropFilter: "blur(2px)",

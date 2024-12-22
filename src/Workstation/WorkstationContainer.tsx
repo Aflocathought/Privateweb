@@ -1,7 +1,7 @@
 import { Divider } from "@fluentui/react-components";
 import { WeatherChart } from "../Weather/Weather";
 import { Classtable } from "../Classtable/Classtable";
-import { Todo } from "../Todo/TodoUpdate copy";
+import { Todo } from "../Todo/TodoUpdate";
 import { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -52,25 +52,11 @@ export const WorkstationContainer: React.FC = () => {
   }, [windowList]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        height: "auto",
-        minHeight: "100%",
-        maxWidth: "100%",
-      }}
-    >
+    <div className="flex flex-row h-[auto] min-h-[100%] max-w-[100%]">
       <div
+        className="w-[70px] bg-[#f0f0f0] p-2.5 h-[100vh] fixed z-[114519] rounded-[15px]"
         style={{
-          borderRadius: "15px",
-          width: "70px", // 根据需要调整宽度
-          backgroundColor: "#f0f0f0", // 背景颜色，根据需要调整
-          padding: "10px", // 内边距，根据需要调整
           boxSizing: "border-box",
-          height: "100vh",
-          position: "fixed",
-          zIndex: "114519",
         }}
       >
         <ul
@@ -106,10 +92,7 @@ export const WorkstationContainer: React.FC = () => {
         </ul>
       </div>
       {/* 抽屉内容 */}
-      <div
-        id="ws_container"
-        style={{ display: "flex", marginLeft: "70px", maxWidth: "95%" }}
-      >
+      <div id="ws_container" className="flex ml-[70px] max-w-[95%] ">
         {windowList.map((componentName, index) => {
           const Component = componentMap[componentName];
           return Component ? <Component key={index} /> : null;

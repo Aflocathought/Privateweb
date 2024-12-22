@@ -1,9 +1,12 @@
-import { TodoItem } from "./TodoUpdate";
+import { TodoItem } from "./Todo";
 interface TodoRendererProps {
-    TodoItems : TodoItem[];
+    todo: TodoItem;
 }
 
-export const TodoRenderer = (props: TodoRendererProps) => {
-    return <div>
-    </div>;
+export const TodoRenderer: React.FC<TodoRendererProps> = ({}) => {
+
+  return (
+    <div>
+    </div>
+  );
 };
