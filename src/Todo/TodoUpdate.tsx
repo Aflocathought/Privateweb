@@ -11,7 +11,7 @@ import { TodoGroupRenderer } from "./Components/TodoGroupRenderer";
 import { todoEventBus } from "./Todo";
 
 export const Todo = () => {
-  const manager = new TodoManager();
+  const manager = TodoManager.getInstance();
   const iconOptions: IDropdownOption[] = Object.keys(fas).map((iconName) => ({
     key: iconName,
     text: iconName,
@@ -31,9 +31,7 @@ export const Todo = () => {
   return (
     <div className="Todo flex flex-row p-3.5 items-start max-w-[100%]">
       {/* 主界面 */}
-      <div
-        className="z-100 w-100 mr-2.5 top-0 bg-white"
-      >
+      <div className="z-100 w-100 mr-2.5 top-0 bg-white">
         <div className="mt-4 flex-col">
           <CombinedInput
             exportData={(data) => {
@@ -41,7 +39,13 @@ export const Todo = () => {
             }}
           />
           <div>
-            <Button onClick={() => manager.undoDeleteTodo()}>撤销删除</Button>
+            <Button
+              onClick={() => {
+                manager.undoDeleteTodo();
+              }}
+            >
+              撤销删除
+            </Button>
             <Button
               onClick={() => manager.undoDeleteSubtask()}
               style={{ marginLeft: "10px" }}
@@ -54,6 +58,14 @@ export const Todo = () => {
             >
               保存Todo
             </Button>
+            <Button
+              onClick={() => {
+                console.log(manager);
+              }}
+              style={{ marginLeft: "10px" }}
+            >
+              看看todomanager
+            </Button>
           </div>
           <Divider className="mt-2" />
         </div>
@@ -61,7 +73,6 @@ export const Todo = () => {
 
       {/* 待办事项列表 */}
       <div className="TodoMain flex">
-        
         {manager.Todos.map((todo, index) => (
           <TodoGroupRenderer key={`todoitem-${index}`} todo={todo} />
         ))}

@@ -172,13 +172,16 @@ export class TodoItem implements TodoStructure {
   addSubtask = (content: string, event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
     this.subtasks.push(
-      new Subtask({
-        text: content,
-        completed: false,
-        originID: this.ID,
-        ID: Date.now(),
-        selfcollapsed: false,
-      })
+      new Subtask(
+        {
+          text: content,
+          completed: false,
+          originID: this.ID,
+          ID: Date.now(),
+          selfcollapsed: false,
+        },
+        this
+      )
     );
     this.emitUpdate();
     this.writeTodo();
@@ -209,10 +212,20 @@ export class TodoManager {
   deletedTodos: TodoItem[] = [];
   deletedSubtasks: Subtask[] = [];
 
-  constructor() {
+  private static instance: TodoManager;
+
+  private constructor() {
     this.readTodo();
     this.Todos = this.Todos || [];
-    this.deletedTodos = [];
+    this.deletedTodos = this.deletedTodos || [];
+    this.deletedSubtasks = this.deletedSubtasks || [];
+  }
+  
+  public static getInstance(): TodoManager {
+    if (!TodoManager.instance) {
+      TodoManager.instance = new TodoManager();
+    }
+    return TodoManager.instance;
   }
 
   private emitUpdate() {
