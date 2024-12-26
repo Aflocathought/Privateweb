@@ -17,12 +17,9 @@ export const WorkstationLabel: React.FC<WorkstationLabelProps> = ({
   return (
     <div id={id} style={{ display: "flex", justifyContent: "center" }}>
       <div
-        className="fixed w-auto"
+        className={`fixed w-auto  -bottom-[35px] rounded-[15px] text-center`}
         style={{
           height: hover ? "100px" : "75px",
-          borderRadius: "15px",
-          textAlign: "center",
-          bottom: -35,
           cursor: "pointer",
           padding: "10px 0",
           backgroundColor: "rgba(255, 255, 255,0.5)",
@@ -38,9 +35,7 @@ export const WorkstationLabel: React.FC<WorkstationLabelProps> = ({
           setHover(false);
         }}
       >
-        <p className="ml-2 mr-2 mt-0.5" style={{ color: "rgba(99,99,99,1)" }}>
-          {"点击展开工作区域"}
-        </p>
+        <p className="ml-2 mr-2 mt-0.5 text-[#636363]">点击展开工作区域</p>
       </div>
       <Mouse setIsVisible={setIsVisible} />
     </div>

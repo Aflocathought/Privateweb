@@ -1,6 +1,6 @@
 import { TodoItem } from "../Todo";
 import React, { useState, useEffect } from "react";
-import { Icon } from "../Components/SelectableIcon";
+import { Icon } from "./SelectableIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MyColorPicker } from "../../Components/ColorPicker/MyColorPicker";
 import { Button } from "antd";
@@ -21,11 +21,15 @@ import {
 } from "../TodoFunction";
 import { SubtaskRenderer } from "./SubtaskRenderer";
 
-interface TodoItemRendererProps {
+interface TodoGroupRendererProps {
   todo: TodoItem;
+  key: string;
 }
 
-export const TodoItemRenderer: React.FC<TodoItemRendererProps> = ({ todo }) => {
+export const TodoGroupRenderer: React.FC<TodoGroupRendererProps> = ({
+  todo,
+  key,
+}) => {
   const [, forceUpdate] = useState({});
   const [hover, setHover] = useState(false);
 
@@ -75,6 +79,7 @@ export const TodoItemRenderer: React.FC<TodoItemRendererProps> = ({ todo }) => {
 
   return (
     <div
+      key={key}
       className="todo"
       style={getTodoColorStyle(todo)}
       onMouseEnter={() => {
@@ -152,25 +157,24 @@ export const TodoItemRenderer: React.FC<TodoItemRendererProps> = ({ todo }) => {
             </div>
             {/* 标题行 */}
             {/*子任务呈现*/}
-            <ul>
-              <div
-            
-                className={`flex flex-col subtaskcollapse ${
-                  todo.subtaskscollapsed ? "collapsed" : ""
-                }`}
-                onMouseLeave={(e) => {
-                  handleMouseLeaveinSubtask(e);
-                }}
-              >
-                {(todo.subtasks || []).map((subtask, subindex) => (
-                  <SubtaskRenderer
-                    key={`todoitem-subtask-${subindex}`}
-                    subtask={subtask}
-                    hoverM={hover}
-                  />
-                ))}
-              </div>
-            </ul>
+
+            <div
+              className={`flex flex-col subtaskcollapse ${
+                todo.subtaskscollapsed ? "collapsed" : ""
+              }`}
+              onMouseLeave={(e) => {
+                handleMouseLeaveinSubtask(e);
+              }}
+            >
+              {(todo.subtasks || []).map((subtask, subindex) => (
+                <SubtaskRenderer
+                  key={`todoitem-subtask-${subindex}`}
+                  subtask={subtask}
+                  hoverM={hover}
+                />
+              ))}
+            </div>
+
             {/*子任务呈现*/}
             {hover && (
               <div className="flex content-center mt-2">

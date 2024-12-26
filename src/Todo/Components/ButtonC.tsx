@@ -23,7 +23,7 @@ export const ButtonC: React.FC<ButtonCProps> = ({
       >
         {children}
       </Button>
-      {showComponent && show ? <div >{showComponent}</div> : null}
+      {showComponent && show ? <div>{showComponent}</div> : null}
     </>
   );
 };

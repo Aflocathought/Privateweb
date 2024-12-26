@@ -10,25 +10,14 @@
 }
 
 .Todo {
-  background-color: rgba(255, 255, 255, 1);
-  border-radius: 15px;
-  font-family: Arial;
+  @apply bg-white rounded-[15px];
 
   .TodoMain {
-    overflow-x: scroll;
-    display: flex;
-    flex-direction: row;
+    @apply w-[100%] flex flex-row overflow-x-auto items-start;
 
     .todo {
-      left: 2%;
-      width: 350px;
-      height: auto;
-      margin-right: 10px;
-      padding: 15px;
-      margin-top: 15px;
+      @apply left-2 min-w-[350px] mr-2.5 p-4 mt-4 rounded-[15px] transition-all;
       box-sizing: border-box;
-      border-radius: 15px;
-      font-family: Arial;
       transition: height 0.4s ease-in-out;
     }
   }
@@ -108,4 +97,3 @@
   width: 100%;
   margin-top: -3px;
 }
-

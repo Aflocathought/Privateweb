@@ -7,7 +7,7 @@ import { Button } from "antd";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { CombinedInput } from "./Components/CombinedInput";
 import { TodoManager } from "./Todo";
-import { TodoItemRenderer } from "./Components/TodoItemRenderer";
+import { TodoGroupRenderer } from "./Components/TodoGroupRenderer";
 import { todoEventBus } from "./Todo";
 
 export const Todo = () => {
@@ -61,8 +61,9 @@ export const Todo = () => {
 
       {/* 待办事项列表 */}
       <div className="TodoMain flex">
+        
         {manager.Todos.map((todo, index) => (
-          <TodoItemRenderer key={`todoitem-${index}`} todo={todo} />
+          <TodoGroupRenderer key={`todoitem-${index}`} todo={todo} />
         ))}
       </div>
     </div>
